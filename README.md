@@ -258,27 +258,14 @@ CVE Sentinel is designed to work seamlessly with [Claude Code](https://claude.ai
 
 ## Sample Output
 
-```json
-{
-  "scan_time": "2025-01-21T00:00:00Z",
-  "summary": {
-    "critical": 1,
-    "high": 3,
-    "medium": 5,
-    "low": 2
-  },
-  "vulnerabilities": [
-    {
-      "cve_id": "CVE-2024-XXXXX",
-      "package": "lodash",
-      "installed_version": "4.17.20",
-      "severity": "CRITICAL",
-      "description": "Prototype pollution vulnerability...",
-      "fix_version": "4.17.21",
-      "remediation": "npm update lodash"
-    }
-  ]
-}
+```
+⚠ CVE Scan Complete: 73 vulnerabilities found
+
+[CVE-2025-xxxxx] (Description)
+Severity: 
+Description: 
+Affected Files: '/path/where/this/vuln/exists'
+Fix: 
 ```
 
 ---
