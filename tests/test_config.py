@@ -29,7 +29,7 @@ class TestConfig:
         config = Config()
         assert config.target_path == Path(".")
         assert config.exclude == ["node_modules/", "vendor/", ".git/", "__pycache__/", "venv/"]
-        assert config.analysis_level == 3
+        assert config.analysis_level == 2
         assert config.auto_scan_on_startup is True
         assert config.cache_ttl_hours == 24
         assert config.nvd_api_key is None
@@ -340,5 +340,5 @@ class TestGetDefaultConfig:
         config = get_default_config()
         assert isinstance(config, Config)
         assert config.target_path == Path(".")
-        assert config.analysis_level == 3
+        assert config.analysis_level == 2
         assert config.nvd_api_key is None

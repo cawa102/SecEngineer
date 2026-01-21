@@ -42,7 +42,7 @@ class Config:
     exclude: list[str] = field(
         default_factory=lambda: ["node_modules/", "vendor/", ".git/", "__pycache__/", "venv/"]
     )
-    analysis_level: int = 3
+    analysis_level: int = 2
     auto_scan_on_startup: bool = True
     cache_ttl_hours: int = 24
     nvd_api_key: Optional[str] = None

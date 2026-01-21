@@ -277,6 +277,18 @@ CVE Sentinel is designed to work seamlessly with [Claude Code](https://claude.ai
 
 ---
 
+## NVD API Key (Recommended)
+
+For faster scanning, get a free API key from [NVD](https://nvd.nist.gov/developers/request-an-api-key):
+
+```bash
+export CVE_SENTINEL_NVD_API_KEY=your-api-key-here
+```
+
+Without an API key, requests are rate-limited to 5 per 30 seconds.
+
+---
+
 ## Development
 
 ```bash
