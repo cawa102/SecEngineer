@@ -265,7 +265,8 @@ CVE Sentinel is designed to work seamlessly with [Claude Code](https://claude.ai
 Severity: 
 Description: 
 Affected Files: '/path/where/this/vuln/exists'
-Fix: 
+Fix:
+...
 ```
 
 ---
