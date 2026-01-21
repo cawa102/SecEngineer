@@ -45,10 +45,10 @@ dev = [
 cve-sentinel = "cve_sentinel.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/cawa102/SecEngineer"
-Documentation = "https://github.com/cawa102/SecEngineer#readme"
-Repository = "https://github.com/cawa102/SecEngineer"
-Issues = "https://github.com/cawa102/SecEngineer/issues"
+Homepage = "https://github.com/cawa102/cveSentinel"
+Documentation = "https://github.com/cawa102/cveSentinel#readme"
+Repository = "https://github.com/cawa102/cveSentinel"
+Issues = "https://github.com/cawa102/cveSentinel/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["cve_sentinel"]

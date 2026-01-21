@@ -42,8 +42,16 @@ Every day, new vulnerabilities are discovered in popular packages. **CVE Sentine
 
 ## Quick Start
 
+### Installation
+
 ```bash
-pip install cve-sentinel
+# Install from GitHub
+pip install git+https://github.com/cawa102/cveSentinel.git
+
+# Or clone and install locally
+git clone https://github.com/cawa102/cveSentinel.git
+cd cveSentinel
+pip install .
 ```
 
 ### Scan Your Project
