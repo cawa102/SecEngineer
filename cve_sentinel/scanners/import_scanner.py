@@ -191,13 +191,9 @@ class JavaScriptScanner(BaseLanguageScanner):
         r"""import\s+(?:(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)(?:\s*,\s*(?:\{[^}]*\}|\*\s+as\s+\w+|\w+))*\s+from\s+)?['"]([^'"]+)['"]"""
     )
     # require('package')
-    REQUIRE_PATTERN: Pattern = re.compile(
-        r"""require\s*\(\s*['"]([^'"]+)['"]\s*\)"""
-    )
+    REQUIRE_PATTERN: Pattern = re.compile(r"""require\s*\(\s*['"]([^'"]+)['"]\s*\)""")
     # import('package') - dynamic import
-    DYNAMIC_IMPORT_PATTERN: Pattern = re.compile(
-        r"""import\s*\(\s*['"]([^'"]+)['"]\s*\)"""
-    )
+    DYNAMIC_IMPORT_PATTERN: Pattern = re.compile(r"""import\s*\(\s*['"]([^'"]+)['"]\s*\)""")
 
     def _extract_packages(self, line: str) -> List[tuple]:
         """Extract package names from JavaScript/TypeScript import statements."""
@@ -270,49 +266,211 @@ class PythonScanner(BaseLanguageScanner):
 
     # Patterns for Python imports
     # import package or import package as alias
-    IMPORT_PATTERN: Pattern = re.compile(
-        r"""^import\s+([\w.]+)"""
-    )
+    IMPORT_PATTERN: Pattern = re.compile(r"""^import\s+([\w.]+)""")
     # from package import ... or from package.sub import ...
-    FROM_IMPORT_PATTERN: Pattern = re.compile(
-        r"""^from\s+([\w.]+)\s+import\s+"""
-    )
+    FROM_IMPORT_PATTERN: Pattern = re.compile(r"""^from\s+([\w.]+)\s+import\s+""")
 
     # Standard library modules to exclude
     STDLIB_MODULES: Set[str] = {
-        "abc", "aifc", "argparse", "array", "ast", "asyncio", "atexit",
-        "base64", "bdb", "binascii", "binhex", "bisect", "builtins",
-        "bz2", "calendar", "cgi", "cgitb", "chunk", "cmath", "cmd",
-        "code", "codecs", "codeop", "collections", "colorsys", "compileall",
-        "concurrent", "configparser", "contextlib", "contextvars", "copy",
-        "copyreg", "cProfile", "crypt", "csv", "ctypes", "curses",
-        "dataclasses", "datetime", "dbm", "decimal", "difflib", "dis",
-        "distutils", "doctest", "email", "encodings", "enum", "errno",
-        "faulthandler", "fcntl", "filecmp", "fileinput", "fnmatch",
-        "fractions", "ftplib", "functools", "gc", "getopt", "getpass",
-        "gettext", "glob", "graphlib", "grp", "gzip", "hashlib", "heapq",
-        "hmac", "html", "http", "imaplib", "imghdr", "imp", "importlib",
-        "inspect", "io", "ipaddress", "itertools", "json", "keyword",
-        "lib2to3", "linecache", "locale", "logging", "lzma", "mailbox",
-        "mailcap", "marshal", "math", "mimetypes", "mmap", "modulefinder",
-        "multiprocessing", "netrc", "nis", "nntplib", "numbers", "operator",
-        "optparse", "os", "ossaudiodev", "pathlib", "pdb", "pickle",
-        "pickletools", "pipes", "pkgutil", "platform", "plistlib", "poplib",
-        "posix", "posixpath", "pprint", "profile", "pstats", "pty", "pwd",
-        "py_compile", "pyclbr", "pydoc", "queue", "quopri", "random", "re",
-        "readline", "reprlib", "resource", "rlcompleter", "runpy", "sched",
-        "secrets", "select", "selectors", "shelve", "shlex", "shutil",
-        "signal", "site", "smtpd", "smtplib", "sndhdr", "socket",
-        "socketserver", "spwd", "sqlite3", "ssl", "stat", "statistics",
-        "string", "stringprep", "struct", "subprocess", "sunau", "symtable",
-        "sys", "sysconfig", "syslog", "tabnanny", "tarfile", "telnetlib",
-        "tempfile", "termios", "test", "textwrap", "threading", "time",
-        "timeit", "tkinter", "token", "tokenize", "trace", "traceback",
-        "tracemalloc", "tty", "turtle", "turtledemo", "types", "typing",
-        "unicodedata", "unittest", "urllib", "uu", "uuid", "venv",
-        "warnings", "wave", "weakref", "webbrowser", "winreg", "winsound",
-        "wsgiref", "xdrlib", "xml", "xmlrpc", "zipapp", "zipfile",
-        "zipimport", "zlib", "_thread",
+        "abc",
+        "aifc",
+        "argparse",
+        "array",
+        "ast",
+        "asyncio",
+        "atexit",
+        "base64",
+        "bdb",
+        "binascii",
+        "binhex",
+        "bisect",
+        "builtins",
+        "bz2",
+        "calendar",
+        "cgi",
+        "cgitb",
+        "chunk",
+        "cmath",
+        "cmd",
+        "code",
+        "codecs",
+        "codeop",
+        "collections",
+        "colorsys",
+        "compileall",
+        "concurrent",
+        "configparser",
+        "contextlib",
+        "contextvars",
+        "copy",
+        "copyreg",
+        "cProfile",
+        "crypt",
+        "csv",
+        "ctypes",
+        "curses",
+        "dataclasses",
+        "datetime",
+        "dbm",
+        "decimal",
+        "difflib",
+        "dis",
+        "distutils",
+        "doctest",
+        "email",
+        "encodings",
+        "enum",
+        "errno",
+        "faulthandler",
+        "fcntl",
+        "filecmp",
+        "fileinput",
+        "fnmatch",
+        "fractions",
+        "ftplib",
+        "functools",
+        "gc",
+        "getopt",
+        "getpass",
+        "gettext",
+        "glob",
+        "graphlib",
+        "grp",
+        "gzip",
+        "hashlib",
+        "heapq",
+        "hmac",
+        "html",
+        "http",
+        "imaplib",
+        "imghdr",
+        "imp",
+        "importlib",
+        "inspect",
+        "io",
+        "ipaddress",
+        "itertools",
+        "json",
+        "keyword",
+        "lib2to3",
+        "linecache",
+        "locale",
+        "logging",
+        "lzma",
+        "mailbox",
+        "mailcap",
+        "marshal",
+        "math",
+        "mimetypes",
+        "mmap",
+        "modulefinder",
+        "multiprocessing",
+        "netrc",
+        "nis",
+        "nntplib",
+        "numbers",
+        "operator",
+        "optparse",
+        "os",
+        "ossaudiodev",
+        "pathlib",
+        "pdb",
+        "pickle",
+        "pickletools",
+        "pipes",
+        "pkgutil",
+        "platform",
+        "plistlib",
+        "poplib",
+        "posix",
+        "posixpath",
+        "pprint",
+        "profile",
+        "pstats",
+        "pty",
+        "pwd",
+        "py_compile",
+        "pyclbr",
+        "pydoc",
+        "queue",
+        "quopri",
+        "random",
+        "re",
+        "readline",
+        "reprlib",
+        "resource",
+        "rlcompleter",
+        "runpy",
+        "sched",
+        "secrets",
+        "select",
+        "selectors",
+        "shelve",
+        "shlex",
+        "shutil",
+        "signal",
+        "site",
+        "smtpd",
+        "smtplib",
+        "sndhdr",
+        "socket",
+        "socketserver",
+        "spwd",
+        "sqlite3",
+        "ssl",
+        "stat",
+        "statistics",
+        "string",
+        "stringprep",
+        "struct",
+        "subprocess",
+        "sunau",
+        "symtable",
+        "sys",
+        "sysconfig",
+        "syslog",
+        "tabnanny",
+        "tarfile",
+        "telnetlib",
+        "tempfile",
+        "termios",
+        "test",
+        "textwrap",
+        "threading",
+        "time",
+        "timeit",
+        "tkinter",
+        "token",
+        "tokenize",
+        "trace",
+        "traceback",
+        "tracemalloc",
+        "tty",
+        "turtle",
+        "turtledemo",
+        "types",
+        "typing",
+        "unicodedata",
+        "unittest",
+        "urllib",
+        "uu",
+        "uuid",
+        "venv",
+        "warnings",
+        "wave",
+        "weakref",
+        "webbrowser",
+        "winreg",
+        "winsound",
+        "wsgiref",
+        "xdrlib",
+        "xml",
+        "xmlrpc",
+        "zipapp",
+        "zipfile",
+        "zipimport",
+        "zlib",
+        "_thread",
     }
 
     def _extract_packages(self, line: str) -> List[tuple]:
@@ -370,24 +528,53 @@ class GoScanner(BaseLanguageScanner):
 
     # Patterns for Go imports
     # import "package"
-    SINGLE_IMPORT_PATTERN: Pattern = re.compile(
-        r"""^\s*import\s+(?:\w+\s+)?["']([^"']+)["']"""
-    )
+    SINGLE_IMPORT_PATTERN: Pattern = re.compile(r"""^\s*import\s+(?:\w+\s+)?["']([^"']+)["']""")
     # import ( "package" ) - inside block
-    BLOCK_IMPORT_PATTERN: Pattern = re.compile(
-        r"""^\s*(?:\w+\s+)?["']([^"']+)["']"""
-    )
+    BLOCK_IMPORT_PATTERN: Pattern = re.compile(r"""^\s*(?:\w+\s+)?["']([^"']+)["']""")
 
     # Standard library prefixes to exclude
     STDLIB_PREFIXES: List[str] = [
-        "archive/", "bufio", "bytes", "compress/", "container/",
-        "context", "crypto/", "database/", "debug/", "embed",
-        "encoding/", "errors", "expvar", "flag", "fmt", "go/",
-        "hash/", "html/", "image/", "index/", "io", "log/",
-        "math/", "mime/", "net/", "os", "path/", "plugin",
-        "reflect", "regexp", "runtime", "sort", "strconv",
-        "strings", "sync", "syscall", "testing", "text/",
-        "time", "unicode", "unsafe",
+        "archive/",
+        "bufio",
+        "bytes",
+        "compress/",
+        "container/",
+        "context",
+        "crypto/",
+        "database/",
+        "debug/",
+        "embed",
+        "encoding/",
+        "errors",
+        "expvar",
+        "flag",
+        "fmt",
+        "go/",
+        "hash/",
+        "html/",
+        "image/",
+        "index/",
+        "io",
+        "log/",
+        "math/",
+        "mime/",
+        "net/",
+        "os",
+        "path/",
+        "plugin",
+        "reflect",
+        "regexp",
+        "runtime",
+        "sort",
+        "strconv",
+        "strings",
+        "sync",
+        "syscall",
+        "testing",
+        "text/",
+        "time",
+        "unicode",
+        "unsafe",
     ]
 
     def __init__(self, exclude_patterns: Optional[List[str]] = None) -> None:
@@ -493,13 +680,15 @@ class JavaScanner(BaseLanguageScanner):
 
     # Pattern for Java imports
     # import package.Class; or import package.*;
-    IMPORT_PATTERN: Pattern = re.compile(
-        r"""^\s*import\s+(?:static\s+)?([\w.]+)(?:\.\*)?;"""
-    )
+    IMPORT_PATTERN: Pattern = re.compile(r"""^\s*import\s+(?:static\s+)?([\w.]+)(?:\.\*)?;""")
 
     # Java standard library and common internal packages to exclude
     STDLIB_PACKAGES: List[str] = [
-        "java.", "javax.", "sun.", "com.sun.", "jdk.",
+        "java.",
+        "javax.",
+        "sun.",
+        "com.sun.",
+        "jdk.",
     ]
 
     def _extract_packages(self, line: str) -> List[tuple]:
@@ -534,7 +723,7 @@ class JavaScanner(BaseLanguageScanner):
         parts = import_path.split(".")
         if len(parts) >= 2:
             # Common pattern: org.groupid.artifactid or com.groupid.artifactid
-            return ".".join(parts[:min(3, len(parts))])
+            return ".".join(parts[: min(3, len(parts))])
 
         return None
 
@@ -547,30 +736,99 @@ class RubyScanner(BaseLanguageScanner):
 
     # Patterns for Ruby requires
     # require 'package' or require "package"
-    REQUIRE_PATTERN: Pattern = re.compile(
-        r"""^\s*require\s+['"]([^'"]+)['"]"""
-    )
+    REQUIRE_PATTERN: Pattern = re.compile(r"""^\s*require\s+['"]([^'"]+)['"]""")
     # require_relative should be excluded
-    REQUIRE_RELATIVE_PATTERN: Pattern = re.compile(
-        r"""^\s*require_relative\s+"""
-    )
+    REQUIRE_RELATIVE_PATTERN: Pattern = re.compile(r"""^\s*require_relative\s+""")
 
     # Ruby standard library modules to exclude
     STDLIB_MODULES: Set[str] = {
-        "abbrev", "base64", "benchmark", "bigdecimal", "cgi", "cmath",
-        "coverage", "csv", "date", "dbm", "debug", "delegate", "digest",
-        "drb", "english", "erb", "etc", "extmk", "fcntl", "fiddle",
-        "fileutils", "find", "forwardable", "gdbm", "getoptlong", "io",
-        "ipaddr", "irb", "json", "logger", "matrix", "minitest", "mkmf",
-        "monitor", "mutex_m", "net", "nkf", "objspace", "observer",
-        "open-uri", "open3", "openssl", "optparse", "ostruct", "pathname",
-        "pp", "prettyprint", "prime", "pstore", "psych", "pty", "racc",
-        "rake", "rdoc", "readline", "reline", "resolv", "resolv-replace",
-        "rexml", "rinda", "ripper", "rss", "rubygems", "scanf", "sdbm",
-        "securerandom", "set", "shellwords", "singleton", "socket",
-        "stringio", "strscan", "syslog", "tempfile", "thwait", "time",
-        "timeout", "tmpdir", "tracer", "tsort", "un", "unicode_normalize",
-        "uri", "weakref", "webrick", "yaml", "zlib",
+        "abbrev",
+        "base64",
+        "benchmark",
+        "bigdecimal",
+        "cgi",
+        "cmath",
+        "coverage",
+        "csv",
+        "date",
+        "dbm",
+        "debug",
+        "delegate",
+        "digest",
+        "drb",
+        "english",
+        "erb",
+        "etc",
+        "extmk",
+        "fcntl",
+        "fiddle",
+        "fileutils",
+        "find",
+        "forwardable",
+        "gdbm",
+        "getoptlong",
+        "io",
+        "ipaddr",
+        "irb",
+        "json",
+        "logger",
+        "matrix",
+        "minitest",
+        "mkmf",
+        "monitor",
+        "mutex_m",
+        "net",
+        "nkf",
+        "objspace",
+        "observer",
+        "open-uri",
+        "open3",
+        "openssl",
+        "optparse",
+        "ostruct",
+        "pathname",
+        "pp",
+        "prettyprint",
+        "prime",
+        "pstore",
+        "psych",
+        "pty",
+        "racc",
+        "rake",
+        "rdoc",
+        "readline",
+        "reline",
+        "resolv",
+        "resolv-replace",
+        "rexml",
+        "rinda",
+        "ripper",
+        "rss",
+        "rubygems",
+        "scanf",
+        "sdbm",
+        "securerandom",
+        "set",
+        "shellwords",
+        "singleton",
+        "socket",
+        "stringio",
+        "strscan",
+        "syslog",
+        "tempfile",
+        "thwait",
+        "time",
+        "timeout",
+        "tmpdir",
+        "tracer",
+        "tsort",
+        "un",
+        "unicode_normalize",
+        "uri",
+        "weakref",
+        "webrick",
+        "yaml",
+        "zlib",
     }
 
     def _extract_packages(self, line: str) -> List[tuple]:
@@ -619,18 +877,20 @@ class RustScanner(BaseLanguageScanner):
 
     # Patterns for Rust
     # use crate::...; or use package::...;
-    USE_PATTERN: Pattern = re.compile(
-        r"""^\s*use\s+([\w]+)(?:::|;)"""
-    )
+    USE_PATTERN: Pattern = re.compile(r"""^\s*use\s+([\w]+)(?:::|;)""")
     # extern crate package;
-    EXTERN_CRATE_PATTERN: Pattern = re.compile(
-        r"""^\s*extern\s+crate\s+([\w]+)"""
-    )
+    EXTERN_CRATE_PATTERN: Pattern = re.compile(r"""^\s*extern\s+crate\s+([\w]+)""")
 
     # Rust standard library and internal crates to exclude
     STDLIB_CRATES: Set[str] = {
-        "std", "core", "alloc", "proc_macro", "test",
-        "crate", "self", "super",
+        "std",
+        "core",
+        "alloc",
+        "proc_macro",
+        "test",
+        "crate",
+        "self",
+        "super",
     }
 
     def _extract_packages(self, line: str) -> List[tuple]:
@@ -669,15 +929,22 @@ class PHPScanner(BaseLanguageScanner):
 
     # Patterns for PHP
     # use Namespace\Class;
-    USE_PATTERN: Pattern = re.compile(
-        r"""^\s*use\s+([\w\\]+)"""
-    )
+    USE_PATTERN: Pattern = re.compile(r"""^\s*use\s+([\w\\]+)""")
 
     # PHP internal namespaces to exclude
     INTERNAL_NAMESPACES: List[str] = [
-        "Exception", "Error", "Throwable", "Iterator", "Generator",
-        "Closure", "stdClass", "DateTime", "DateTimeImmutable",
-        "DateInterval", "DatePeriod", "DateTimeZone",
+        "Exception",
+        "Error",
+        "Throwable",
+        "Iterator",
+        "Generator",
+        "Closure",
+        "stdClass",
+        "DateTime",
+        "DateTimeImmutable",
+        "DateInterval",
+        "DatePeriod",
+        "DateTimeZone",
     ]
 
     def _extract_packages(self, line: str) -> List[tuple]:

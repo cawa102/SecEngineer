@@ -280,9 +280,10 @@ nvd_api_key: custom-key
 
     def test_nonexistent_custom_config_path_raises_error(self, tmp_path: Path) -> None:
         """Test that nonexistent custom config path raises error."""
-        with mock.patch.dict(
-            os.environ, {"CVE_SENTINEL_CONFIG_PATH": "/nonexistent/config.yaml"}
-        ), pytest.raises(ConfigError, match="does not exist"):
+        with (
+            mock.patch.dict(os.environ, {"CVE_SENTINEL_CONFIG_PATH": "/nonexistent/config.yaml"}),
+            pytest.raises(ConfigError, match="does not exist"),
+        ):
             load_config(tmp_path)
 
     def test_load_without_validation(self, tmp_path: Path) -> None:

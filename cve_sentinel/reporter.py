@@ -266,9 +266,7 @@ class Reporter:
             "project_path": str(project_path.absolute()),
             "packages_scanned": packages_scanned,
             "summary": summary.to_dict(),
-            "vulnerabilities": [
-                self._format_vulnerability_for_json(v) for v in vulnerabilities
-            ],
+            "vulnerabilities": [self._format_vulnerability_for_json(v) for v in vulnerabilities],
         }
 
         results_file.write_text(json.dumps(data, indent=2, ensure_ascii=False))
@@ -336,7 +334,9 @@ class Reporter:
         """
         # Header with warning
         warning_symbol = TerminalColors.WARNING_SYMBOL
-        header = f"{warning_symbol} CVEスキャン完了: {summary.total_vulnerabilities}件の脆弱性を検出"
+        header = (
+            f"{warning_symbol} CVEスキャン完了: {summary.total_vulnerabilities}件の脆弱性を検出"
+        )
         output.write(self._colorize(header, TerminalColors.RED + TerminalColors.BOLD) + "\n\n")
 
         # Severity summary
@@ -425,7 +425,9 @@ class Reporter:
 
         # Description (truncated)
         if vuln.description:
-            desc = vuln.description[:100] + "..." if len(vuln.description) > 100 else vuln.description
+            desc = (
+                vuln.description[:100] + "..." if len(vuln.description) > 100 else vuln.description
+            )
             output.write(f"  説明: {desc}\n")
 
         # Affected files

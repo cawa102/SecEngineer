@@ -45,13 +45,14 @@ class TestPackageJsonParser:
     def test_parse_dependencies(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing dependencies from package.json."""
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project",
-            "dependencies": {
-                "express": "^4.18.0",
-                "lodash": "~4.17.21"
-            }
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "dependencies": {"express": "^4.18.0", "lodash": "~4.17.21"},
+                }
+            )
+        )
 
         packages = analyzer.parse(package_json)
 
@@ -68,13 +69,14 @@ class TestPackageJsonParser:
     def test_parse_dev_dependencies(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing devDependencies from package.json."""
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project",
-            "devDependencies": {
-                "jest": "^29.0.0",
-                "typescript": "^5.0.0"
-            }
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "devDependencies": {"jest": "^29.0.0", "typescript": "^5.0.0"},
+                }
+            )
+        )
 
         packages = analyzer.parse(package_json)
 
@@ -84,13 +86,14 @@ class TestPackageJsonParser:
     def test_parse_scoped_packages(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing scoped packages (@org/package)."""
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project",
-            "dependencies": {
-                "@types/node": "^20.0.0",
-                "@babel/core": "^7.22.0"
-            }
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "dependencies": {"@types/node": "^20.0.0", "@babel/core": "^7.22.0"},
+                }
+            )
+        )
 
         packages = analyzer.parse(package_json)
 
@@ -102,9 +105,7 @@ class TestPackageJsonParser:
     def test_parse_empty_package_json(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing package.json without dependencies."""
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project"
-        }))
+        package_json.write_text(json.dumps({"name": "test-project"}))
 
         packages = analyzer.parse(package_json)
         assert len(packages) == 0
@@ -112,16 +113,20 @@ class TestPackageJsonParser:
     def test_parse_version_specifiers(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing various version specifiers."""
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project",
-            "dependencies": {
-                "caret": "^1.2.3",
-                "tilde": "~1.2.3",
-                "exact": "1.2.3",
-                "gte": ">=1.2.3",
-                "range": "1.0.0 - 2.0.0"
-            }
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "dependencies": {
+                        "caret": "^1.2.3",
+                        "tilde": "~1.2.3",
+                        "exact": "1.2.3",
+                        "gte": ">=1.2.3",
+                        "range": "1.0.0 - 2.0.0",
+                    },
+                }
+            )
+        )
 
         packages = analyzer.parse(package_json)
 
@@ -135,12 +140,12 @@ class TestPackageJsonParser:
     def test_line_numbers(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test that line numbers are captured."""
         package_json = tmp_path / "package.json"
-        content = '''{
+        content = """{
   "name": "test-project",
   "dependencies": {
     "express": "^4.18.0"
   }
-}'''
+}"""
         package_json.write_text(content)
 
         packages = analyzer.parse(package_json)
@@ -161,23 +166,22 @@ class TestPackageLockParser:
     def test_parse_v2_format(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing package-lock.json v2/v3 format."""
         lock_file = tmp_path / "package-lock.json"
-        lock_file.write_text(json.dumps({
-            "name": "test-project",
-            "lockfileVersion": 3,
-            "packages": {
-                "": {
+        lock_file.write_text(
+            json.dumps(
+                {
                     "name": "test-project",
-                    "dependencies": {"express": "^4.18.0"}
-                },
-                "node_modules/express": {
-                    "version": "4.18.2",
-                    "resolved": "https://registry.npmjs.org/express/-/express-4.18.2.tgz"
-                },
-                "node_modules/accepts": {
-                    "version": "1.3.8"
+                    "lockfileVersion": 3,
+                    "packages": {
+                        "": {"name": "test-project", "dependencies": {"express": "^4.18.0"}},
+                        "node_modules/express": {
+                            "version": "4.18.2",
+                            "resolved": "https://registry.npmjs.org/express/-/express-4.18.2.tgz",
+                        },
+                        "node_modules/accepts": {"version": "1.3.8"},
+                    },
                 }
-            }
-        }))
+            )
+        )
 
         packages = analyzer.parse(lock_file)
 
@@ -190,19 +194,19 @@ class TestPackageLockParser:
     def test_parse_scoped_packages_in_lock(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing scoped packages in package-lock.json."""
         lock_file = tmp_path / "package-lock.json"
-        lock_file.write_text(json.dumps({
-            "name": "test-project",
-            "lockfileVersion": 3,
-            "packages": {
-                "": {"name": "test-project"},
-                "node_modules/@types/node": {
-                    "version": "20.4.5"
-                },
-                "node_modules/@babel/core": {
-                    "version": "7.22.9"
+        lock_file.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "lockfileVersion": 3,
+                    "packages": {
+                        "": {"name": "test-project"},
+                        "node_modules/@types/node": {"version": "20.4.5"},
+                        "node_modules/@babel/core": {"version": "7.22.9"},
+                    },
                 }
-            }
-        }))
+            )
+        )
 
         packages = analyzer.parse(lock_file)
 
@@ -213,19 +217,19 @@ class TestPackageLockParser:
     def test_skip_link_protocol(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test that link: protocol packages are skipped."""
         lock_file = tmp_path / "package-lock.json"
-        lock_file.write_text(json.dumps({
-            "name": "test-project",
-            "lockfileVersion": 3,
-            "packages": {
-                "": {"name": "test-project"},
-                "node_modules/local-pkg": {
-                    "link": True
-                },
-                "node_modules/express": {
-                    "version": "4.18.2"
+        lock_file.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "lockfileVersion": 3,
+                    "packages": {
+                        "": {"name": "test-project"},
+                        "node_modules/local-pkg": {"link": True},
+                        "node_modules/express": {"version": "4.18.2"},
+                    },
                 }
-            }
-        }))
+            )
+        )
 
         packages = analyzer.parse(lock_file)
 
@@ -236,20 +240,20 @@ class TestPackageLockParser:
     def test_parse_v1_format(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing package-lock.json v1 format."""
         lock_file = tmp_path / "package-lock.json"
-        lock_file.write_text(json.dumps({
-            "name": "test-project",
-            "lockfileVersion": 1,
-            "dependencies": {
-                "express": {
-                    "version": "4.18.2",
+        lock_file.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "lockfileVersion": 1,
                     "dependencies": {
-                        "accepts": {
-                            "version": "1.3.8"
+                        "express": {
+                            "version": "4.18.2",
+                            "dependencies": {"accepts": {"version": "1.3.8"}},
                         }
-                    }
+                    },
                 }
-            }
-        }))
+            )
+        )
 
         packages = analyzer.parse(lock_file)
 
@@ -270,7 +274,7 @@ class TestYarnLockParser:
     def test_parse_yarn_lock(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing yarn.lock file."""
         yarn_lock = tmp_path / "yarn.lock"
-        yarn_lock.write_text('''# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
+        yarn_lock.write_text("""# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
 # yarn lockfile v1
 
 express@^4.18.0:
@@ -280,7 +284,7 @@ express@^4.18.0:
 lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz"
-''')
+""")
 
         packages = analyzer.parse(yarn_lock)
 
@@ -295,7 +299,7 @@ lodash@^4.17.21:
     def test_parse_scoped_packages_yarn(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing scoped packages in yarn.lock."""
         yarn_lock = tmp_path / "yarn.lock"
-        yarn_lock.write_text('''# yarn lockfile v1
+        yarn_lock.write_text("""# yarn lockfile v1
 
 "@types/node@^20.0.0":
   version "20.4.5"
@@ -304,7 +308,7 @@ lodash@^4.17.21:
 "@babel/core@^7.22.0":
   version "7.22.9"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.22.9.tgz"
-''')
+""")
 
         packages = analyzer.parse(yarn_lock)
 
@@ -315,12 +319,12 @@ lodash@^4.17.21:
     def test_parse_multiple_version_specifiers(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing packages with multiple version specifiers."""
         yarn_lock = tmp_path / "yarn.lock"
-        yarn_lock.write_text('''# yarn lockfile v1
+        yarn_lock.write_text("""# yarn lockfile v1
 
 "lodash@^4.17.0", "lodash@^4.17.21":
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz"
-''')
+""")
 
         packages = analyzer.parse(yarn_lock)
 
@@ -341,7 +345,7 @@ class TestPnpmLockParser:
     def test_parse_pnpm_lock(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing pnpm-lock.yaml file."""
         pnpm_lock = tmp_path / "pnpm-lock.yaml"
-        pnpm_lock.write_text('''lockfileVersion: '6.0'
+        pnpm_lock.write_text("""lockfileVersion: '6.0'
 
 packages:
   /express@4.18.2:
@@ -352,7 +356,7 @@ packages:
 
   /accepts@1.3.8:
     resolution: {integrity: sha512-yyy}
-''')
+""")
 
         packages = analyzer.parse(pnpm_lock)
 
@@ -364,7 +368,7 @@ packages:
     def test_parse_scoped_packages_pnpm(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing scoped packages in pnpm-lock.yaml."""
         pnpm_lock = tmp_path / "pnpm-lock.yaml"
-        pnpm_lock.write_text('''lockfileVersion: '6.0'
+        pnpm_lock.write_text("""lockfileVersion: '6.0'
 
 packages:
   /@types/node@20.4.5:
@@ -372,7 +376,7 @@ packages:
 
   /@babel/core@7.22.9:
     resolution: {integrity: sha512-yyy}
-''')
+""")
 
         packages = analyzer.parse(pnpm_lock)
 
@@ -383,13 +387,13 @@ packages:
     def test_parse_older_pnpm_format(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test parsing older pnpm-lock.yaml format with dependencies at root."""
         pnpm_lock = tmp_path / "pnpm-lock.yaml"
-        pnpm_lock.write_text('''lockfileVersion: 5.4
+        pnpm_lock.write_text("""lockfileVersion: 5.4
 
 dependencies:
   express: 4.18.2
   lodash:
     version: 4.17.21
-''')
+""")
 
         packages = analyzer.parse(pnpm_lock)
 
@@ -418,9 +422,9 @@ class TestFileDetection:
     def test_detect_all_lock_files(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test detecting all types of lock files."""
         (tmp_path / "package.json").write_text('{"name": "test"}')
-        (tmp_path / "package-lock.json").write_text('{}')
-        (tmp_path / "yarn.lock").write_text('')
-        (tmp_path / "pnpm-lock.yaml").write_text('')
+        (tmp_path / "package-lock.json").write_text("{}")
+        (tmp_path / "yarn.lock").write_text("")
+        (tmp_path / "pnpm-lock.yaml").write_text("")
 
         files = analyzer.detect_files(tmp_path)
 
@@ -435,7 +439,7 @@ class TestFileDetection:
         analyzer = NpmAnalyzer(analysis_level=1)
 
         (tmp_path / "package.json").write_text('{"name": "test"}')
-        (tmp_path / "package-lock.json").write_text('{}')
+        (tmp_path / "package-lock.json").write_text("{}")
 
         files = analyzer.detect_files(tmp_path)
 
@@ -467,23 +471,24 @@ class TestAnalyze:
     def test_analyze_project(self, analyzer: NpmAnalyzer, tmp_path: Path) -> None:
         """Test full project analysis."""
         # Create package.json
-        (tmp_path / "package.json").write_text(json.dumps({
-            "name": "test-project",
-            "dependencies": {
-                "express": "^4.18.0"
-            }
-        }))
+        (tmp_path / "package.json").write_text(
+            json.dumps({"name": "test-project", "dependencies": {"express": "^4.18.0"}})
+        )
 
         # Create package-lock.json
-        (tmp_path / "package-lock.json").write_text(json.dumps({
-            "name": "test-project",
-            "lockfileVersion": 3,
-            "packages": {
-                "": {"name": "test-project"},
-                "node_modules/express": {"version": "4.18.2"},
-                "node_modules/accepts": {"version": "1.3.8"}
-            }
-        }))
+        (tmp_path / "package-lock.json").write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "lockfileVersion": 3,
+                    "packages": {
+                        "": {"name": "test-project"},
+                        "node_modules/express": {"version": "4.18.2"},
+                        "node_modules/accepts": {"version": "1.3.8"},
+                    },
+                }
+            )
+        )
 
         result = analyzer.analyze(tmp_path)
 

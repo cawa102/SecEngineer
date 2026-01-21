@@ -37,7 +37,7 @@ def sample_nvd_response() -> Dict[str, Any]:
                     "descriptions": [
                         {
                             "lang": "en",
-                            "value": "Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints."
+                            "value": "Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features do not protect against attacker controlled LDAP and other JNDI related endpoints.",
                         }
                     ],
                     "metrics": {
@@ -57,10 +57,10 @@ def sample_nvd_response() -> Dict[str, Any]:
                                     "integrityImpact": "HIGH",
                                     "availabilityImpact": "HIGH",
                                     "baseScore": 10.0,
-                                    "baseSeverity": "CRITICAL"
+                                    "baseSeverity": "CRITICAL",
                                 },
                                 "exploitabilityScore": 3.9,
-                                "impactScore": 6.0
+                                "impactScore": 6.0,
                             }
                         ]
                     },
@@ -76,9 +76,9 @@ def sample_nvd_response() -> Dict[str, Any]:
                                             "criteria": "cpe:2.3:a:apache:log4j:*:*:*:*:*:*:*:*",
                                             "versionStartIncluding": "2.0",
                                             "versionEndExcluding": "2.15.0",
-                                            "matchCriteriaId": "TEST-ID"
+                                            "matchCriteriaId": "TEST-ID",
                                         }
-                                    ]
+                                    ],
                                 }
                             ]
                         }
@@ -86,16 +86,16 @@ def sample_nvd_response() -> Dict[str, Any]:
                     "references": [
                         {
                             "url": "https://logging.apache.org/log4j/2.x/security.html",
-                            "source": "security@apache.org"
+                            "source": "security@apache.org",
                         },
                         {
                             "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
-                            "source": "nvd@nist.gov"
-                        }
-                    ]
+                            "source": "nvd@nist.gov",
+                        },
+                    ],
                 }
             }
-        ]
+        ],
     }
 
 
@@ -109,5 +109,5 @@ def sample_empty_nvd_response() -> Dict[str, Any]:
         "format": "NVD_CVE",
         "version": "2.0",
         "timestamp": "2024-01-15T10:00:00.000",
-        "vulnerabilities": []
+        "vulnerabilities": [],
     }

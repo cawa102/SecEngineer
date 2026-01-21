@@ -139,9 +139,7 @@ class TestNVDClient:
                 {
                     "cve": {
                         "id": "CVE-2021-44228",
-                        "descriptions": [
-                            {"lang": "en", "value": "Apache Log4j2 vulnerability"}
-                        ],
+                        "descriptions": [{"lang": "en", "value": "Apache Log4j2 vulnerability"}],
                         "metrics": {
                             "cvssMetricV31": [
                                 {
@@ -227,9 +225,7 @@ class TestNVDClient:
         assert results[0].cve_id == "CVE-2021-44228"
 
     @mock.patch("requests.Session.get")
-    def test_get_cve(
-        self, mock_get: mock.Mock, client: NVDClient, mock_response: dict
-    ) -> None:
+    def test_get_cve(self, mock_get: mock.Mock, client: NVDClient, mock_response: dict) -> None:
         """Test get_cve method."""
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = mock_response
@@ -269,7 +265,9 @@ class TestNVDClient:
         assert exc_info.value.status_code == 500
 
     @mock.patch("requests.Session.get")
-    def test_timeout_retry(self, mock_get: mock.Mock, client: NVDClient, mock_response: dict) -> None:
+    def test_timeout_retry(
+        self, mock_get: mock.Mock, client: NVDClient, mock_response: dict
+    ) -> None:
         """Test timeout with retry."""
         # First two calls timeout, third succeeds
         mock_get.side_effect = [
@@ -295,9 +293,7 @@ class TestNVDClient:
         assert len(results) == 1
 
     @mock.patch("requests.Session.get")
-    def test_cache_hit(
-        self, mock_get: mock.Mock, client: NVDClient, mock_response: dict
-    ) -> None:
+    def test_cache_hit(self, mock_get: mock.Mock, client: NVDClient, mock_response: dict) -> None:
         """Test cache hit avoids API call."""
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = mock_response
@@ -365,9 +361,7 @@ class TestNVDClient:
         assert "lastModEndDate" in call_kwargs.kwargs["params"]
 
     @mock.patch("requests.Session.get")
-    def test_get_total_results(
-        self, mock_get: mock.Mock, client: NVDClient
-    ) -> None:
+    def test_get_total_results(self, mock_get: mock.Mock, client: NVDClient) -> None:
         """Test get_total_results method."""
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {"totalResults": 42, "vulnerabilities": []}
@@ -377,10 +371,9 @@ class TestNVDClient:
         assert total == 42
 
     @mock.patch("requests.Session.get")
-    def test_search_all_by_keyword_pagination(
-        self, mock_get: mock.Mock, client: NVDClient
-    ) -> None:
+    def test_search_all_by_keyword_pagination(self, mock_get: mock.Mock, client: NVDClient) -> None:
         """Test search_all_by_keyword with pagination."""
+
         # Create mock responses for pagination
         def create_cve_response(cve_id: str) -> dict:
             return {
@@ -398,7 +391,9 @@ class TestNVDClient:
         # First page returns 100 results
         page1 = {"vulnerabilities": [create_cve_response(f"CVE-2021-{i:05d}") for i in range(100)]}
         # Second page returns 50 results (less than page size, indicating end)
-        page2 = {"vulnerabilities": [create_cve_response(f"CVE-2021-{i:05d}") for i in range(100, 150)]}
+        page2 = {
+            "vulnerabilities": [create_cve_response(f"CVE-2021-{i:05d}") for i in range(100, 150)]
+        }
 
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.side_effect = [page1, page2]

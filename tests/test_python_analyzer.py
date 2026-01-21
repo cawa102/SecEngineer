@@ -192,9 +192,7 @@ dependencies = [
     "flask>=2.0.0",
 ]
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".toml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -221,9 +219,7 @@ dependencies = ["requests>=2.28.0"]
 [project.optional-dependencies]
 dev = ["pytest>=7.0.0", "ruff>=0.1.0"]
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".toml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -251,9 +247,7 @@ python = "^3.8"
 requests = "^2.28.0"
 flask = {version = "^2.0.0", optional = true}
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".toml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -281,9 +275,7 @@ requests = "^2.28.0"
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.0"
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".toml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -312,9 +304,7 @@ pytest = "^7.0.0"
 [tool.poetry.group.test.dependencies]
 coverage = "^6.0"
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".toml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -343,9 +333,7 @@ requests = "==2.28.0"
 flask = ">=2.0.0"
 django = "*"
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix="", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix="", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -372,9 +360,7 @@ requests = "==2.28.0"
 pytest = ">=7.0.0"
 ruff = "*"
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix="", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix="", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -409,9 +395,7 @@ name = "certifi"
 version = "2022.9.24"
 description = "Python package for Mozilla's CA Bundle"
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".lock", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".lock", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -435,9 +419,7 @@ description = "Python package for Mozilla's CA Bundle"
 name = "requests"
 version = "2.28.0"
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".lock", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".lock", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -478,9 +460,7 @@ class TestPipfileLockParser:
     }
 }
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".lock", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".lock", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)
@@ -507,9 +487,7 @@ class TestPipfileLockParser:
     "develop": {}
 }
 """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".lock", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".lock", delete=False) as f:
             f.write(content)
             f.flush()
             path = Path(f.name)

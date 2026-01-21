@@ -6,7 +6,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -275,7 +275,7 @@ class PythonAnalyzer(BaseAnalyzer):
 
         return packages
 
-    def _extract_poetry_version(self, spec: any) -> str:
+    def _extract_poetry_version(self, spec: Any) -> str:
         """Extract version from Poetry dependency specification."""
         if isinstance(spec, str):
             # Simple version string: "^1.0.0" or ">=1.0,<2.0"
@@ -328,7 +328,7 @@ class PythonAnalyzer(BaseAnalyzer):
 
         return packages
 
-    def _extract_pipfile_version(self, spec: any) -> str:
+    def _extract_pipfile_version(self, spec: Any) -> str:
         """Extract version from Pipfile dependency specification."""
         if isinstance(spec, str):
             if spec == "*":

@@ -149,9 +149,7 @@ class VersionMatcher:
                         fixed = event["fixed"]
 
                 # Check if version falls within range
-                if VersionMatcher._is_in_range(
-                    parsed_version, introduced, fixed, range_type
-                ):
+                if VersionMatcher._is_in_range(parsed_version, introduced, fixed, range_type):
                     return True, fixed
 
         return False, None
@@ -376,10 +374,12 @@ class VulnerabilityMatcher:
         # Build affected files info
         affected_files = []
         if package.source_file:
-            affected_files.append({
-                "file": str(package.source_file),
-                "line": package.source_line,
-            })
+            affected_files.append(
+                {
+                    "file": str(package.source_file),
+                    "line": package.source_line,
+                }
+            )
 
         return VulnerabilityMatch(
             cve_id=primary_id,
@@ -490,6 +490,7 @@ class VulnerabilityMatcher:
             min_index = len(severity_order) - 1
 
         return [
-            m for m in matches
+            m
+            for m in matches
             if severity_order.index(m.severity.upper() if m.severity else "UNKNOWN") <= min_index
         ]

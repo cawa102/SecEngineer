@@ -103,9 +103,7 @@ class RateLimiter:
         now = time.time()
 
         # Remove old requests outside the window
-        self.request_times = [
-            t for t in self.request_times if now - t < self.window_seconds
-        ]
+        self.request_times = [t for t in self.request_times if now - t < self.window_seconds]
 
         if len(self.request_times) >= self.max_requests:
             # Need to wait until oldest request exits the window
@@ -157,10 +155,12 @@ class NVDClient:
             self.cache = Cache(cache_dir, ttl_hours=cache_ttl_hours)
         self.rate_limiter = RateLimiter()
         self._session = requests.Session()
-        self._session.headers.update({
-            "apiKey": api_key,
-            "Accept": "application/json",
-        })
+        self._session.headers.update(
+            {
+                "apiKey": api_key,
+                "Accept": "application/json",
+            }
+        )
 
     def _make_request(
         self,
@@ -229,7 +229,9 @@ class NVDClient:
 
             except requests.exceptions.ConnectionError as e:
                 last_error = NVDAPIError(f"Connection error: {e}")
-                logger.warning(f"NVD API connection error (attempt {attempt + 1}/{self.MAX_RETRIES})")
+                logger.warning(
+                    f"NVD API connection error (attempt {attempt + 1}/{self.MAX_RETRIES})"
+                )
 
             except NVDRateLimitError:
                 # Wait longer for rate limit errors

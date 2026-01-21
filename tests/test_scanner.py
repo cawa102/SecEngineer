@@ -143,9 +143,7 @@ class TestCVESentinelScanner:
         assert scanner._osv_client is None
         assert scanner._initialized is False
 
-    def test_scan_empty_project(
-        self, scanner: CVESentinelScanner, tmp_path: Path
-    ) -> None:
+    def test_scan_empty_project(self, scanner: CVESentinelScanner, tmp_path: Path) -> None:
         """Test scanning an empty project directory."""
         result = scanner.scan(tmp_path)
 
@@ -159,20 +157,22 @@ class TestCVESentinelScanner:
         status_data = json.loads(status_file.read_text())
         assert status_data["status"] == "completed"
 
-    def test_scan_with_npm_project(
-        self, scanner: CVESentinelScanner, tmp_path: Path
-    ) -> None:
+    def test_scan_with_npm_project(self, scanner: CVESentinelScanner, tmp_path: Path) -> None:
         """Test scanning a project with package.json."""
         # Create package.json
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project",
-            "version": "1.0.0",
-            "dependencies": {
-                "lodash": "4.17.21",
-                "express": "4.18.2",
-            },
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "version": "1.0.0",
+                    "dependencies": {
+                        "lodash": "4.17.21",
+                        "express": "4.18.2",
+                    },
+                }
+            )
+        )
 
         # Mock OSV client to return no vulnerabilities
         with patch.object(scanner, "_osv_client") as mock_osv:
@@ -188,9 +188,7 @@ class TestCVESentinelScanner:
         results_file = tmp_path / ".cve-sentinel" / "results.json"
         assert results_file.exists()
 
-    def test_scan_nonexistent_path(
-        self, scanner: CVESentinelScanner, tmp_path: Path
-    ) -> None:
+    def test_scan_nonexistent_path(self, scanner: CVESentinelScanner, tmp_path: Path) -> None:
         """Test scanning a nonexistent path."""
         nonexistent = tmp_path / "nonexistent"
         result = scanner.scan(nonexistent)
@@ -210,9 +208,7 @@ class TestCVESentinelScanner:
         assert result.success is False
         assert any("not a directory" in err for err in result.errors)
 
-    def test_deduplicate_packages(
-        self, scanner: CVESentinelScanner, tmp_path: Path
-    ) -> None:
+    def test_deduplicate_packages(self, scanner: CVESentinelScanner, tmp_path: Path) -> None:
         """Test package deduplication."""
         packages = [
             Package(
@@ -245,9 +241,7 @@ class TestCVESentinelScanner:
         lodash = next(p for p in result if p.name == "lodash")
         assert lodash.is_direct is True
 
-    def test_scan_with_python_project(
-        self, scanner: CVESentinelScanner, tmp_path: Path
-    ) -> None:
+    def test_scan_with_python_project(self, scanner: CVESentinelScanner, tmp_path: Path) -> None:
         """Test scanning a Python project with requirements.txt."""
         # Create requirements.txt
         requirements = tmp_path / "requirements.txt"
@@ -258,16 +252,18 @@ class TestCVESentinelScanner:
         assert result.success is True
         assert result.packages_scanned >= 2
 
-    def test_scan_error_handling(
-        self, scanner: CVESentinelScanner, tmp_path: Path
-    ) -> None:
+    def test_scan_error_handling(self, scanner: CVESentinelScanner, tmp_path: Path) -> None:
         """Test error handling during scan."""
         # Create package.json
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test",
-            "dependencies": {"test-pkg": "1.0.0"},
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test",
+                    "dependencies": {"test-pkg": "1.0.0"},
+                }
+            )
+        )
 
         # Force an error in matcher
         scanner._initialize_components(tmp_path)
@@ -356,10 +352,14 @@ class TestMainFunction:
         """Test main function when vulnerabilities are found."""
         # Create package.json
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project",
-            "dependencies": {"vulnerable-pkg": "1.0.0"},
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "dependencies": {"vulnerable-pkg": "1.0.0"},
+                }
+            )
+        )
 
         # Mock the scanner to return vulnerabilities
         with patch("cve_sentinel.scanner.CVESentinelScanner") as MockScanner:
@@ -393,10 +393,14 @@ class TestMainFunction:
     def test_main_with_fail_on_critical(self, tmp_path: Path) -> None:
         """Test main with --fail-on CRITICAL only fails on critical."""
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project",
-            "dependencies": {"test-pkg": "1.0.0"},
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "dependencies": {"test-pkg": "1.0.0"},
+                }
+            )
+        )
 
         # Mock scanner with HIGH severity vulnerability
         with patch("cve_sentinel.scanner.CVESentinelScanner") as MockScanner:
@@ -447,6 +451,7 @@ class TestMainFunction:
         """Test main with configuration error."""
         with patch("cve_sentinel.scanner.load_config") as mock_load:
             from cve_sentinel.config import ConfigError
+
             mock_load.side_effect = ConfigError("Invalid config")
 
             result = main(["--path", str(tmp_path)])
@@ -468,9 +473,10 @@ class TestSetupLogging:
         try:
             setup_logging(verbose=False)
             # Check that a handler was added with INFO level
-            assert any(
-                h.level <= logging.INFO for h in root_logger.handlers
-            ) or root_logger.level <= logging.INFO
+            assert (
+                any(h.level <= logging.INFO for h in root_logger.handlers)
+                or root_logger.level <= logging.INFO
+            )
         finally:
             # Restore original state
             root_logger.setLevel(original_level)
@@ -486,9 +492,10 @@ class TestSetupLogging:
         try:
             setup_logging(verbose=True)
             # Check that a handler was added with DEBUG level
-            assert any(
-                h.level <= logging.DEBUG for h in root_logger.handlers
-            ) or root_logger.level <= logging.DEBUG
+            assert (
+                any(h.level <= logging.DEBUG for h in root_logger.handlers)
+                or root_logger.level <= logging.DEBUG
+            )
         finally:
             # Restore original state
             root_logger.setLevel(original_level)
@@ -507,13 +514,17 @@ class TestIntegration:
         """Create a project with multiple dependency files."""
         # Create package.json
         package_json = tmp_path / "package.json"
-        package_json.write_text(json.dumps({
-            "name": "test-project",
-            "version": "1.0.0",
-            "dependencies": {
-                "lodash": "4.17.21",
-            },
-        }))
+        package_json.write_text(
+            json.dumps(
+                {
+                    "name": "test-project",
+                    "version": "1.0.0",
+                    "dependencies": {
+                        "lodash": "4.17.21",
+                    },
+                }
+            )
+        )
 
         # Create requirements.txt
         requirements = tmp_path / "requirements.txt"

@@ -179,10 +179,12 @@ class OSVClient:
         if cache_dir:
             self.cache = Cache(cache_dir, ttl_hours=cache_ttl_hours)
         self._session = requests.Session()
-        self._session.headers.update({
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        })
+        self._session.headers.update(
+            {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            }
+        )
 
     def _get_osv_ecosystem(self, ecosystem: str) -> str:
         """Convert internal ecosystem name to OSV ecosystem name.
@@ -275,7 +277,9 @@ class OSVClient:
 
             except requests.exceptions.ConnectionError as e:
                 last_error = OSVAPIError(f"Connection error: {e}")
-                logger.warning(f"OSV API connection error (attempt {attempt + 1}/{self.MAX_RETRIES})")
+                logger.warning(
+                    f"OSV API connection error (attempt {attempt + 1}/{self.MAX_RETRIES})"
+                )
 
             except OSVAPIError:
                 raise
@@ -583,12 +587,10 @@ def merge_nvd_osv_data(
                 existing = merged[primary_cve]
                 if osv_vuln.id not in existing.osv_ids:
                     existing.osv_ids.append(osv_vuln.id)
-                existing.fixed_versions = list(set(
-                    existing.fixed_versions + osv_vuln.fixed_versions
-                ))
-                existing.references = list(set(
-                    existing.references + osv_vuln.references
-                ))
+                existing.fixed_versions = list(
+                    set(existing.fixed_versions + osv_vuln.fixed_versions)
+                )
+                existing.references = list(set(existing.references + osv_vuln.references))
             else:
                 # Create new merged entry
                 merged[primary_cve] = MergedVulnerability(
@@ -637,9 +639,9 @@ def merge_nvd_osv_data(
                             merged_vuln.description = nvd_data.description
 
                         # Merge references
-                        merged_vuln.references = list(set(
-                            merged_vuln.references + nvd_data.references
-                        ))
+                        merged_vuln.references = list(
+                            set(merged_vuln.references + nvd_data.references)
+                        )
 
                         merged_vuln.source = "merged"
                 except Exception as e:

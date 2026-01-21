@@ -69,9 +69,7 @@ class TestVersionMatcher:
         ]
 
         # Version in range
-        is_affected, fix_ver = VersionMatcher.is_version_affected(
-            "1.5.0", affected_ranges
-        )
+        is_affected, fix_ver = VersionMatcher.is_version_affected("1.5.0", affected_ranges)
         assert is_affected is True
         assert fix_ver == "2.0.0"
 
@@ -91,9 +89,7 @@ class TestVersionMatcher:
             }
         ]
 
-        is_affected, fix_ver = VersionMatcher.is_version_affected(
-            "1.5.0", affected_ranges
-        )
+        is_affected, fix_ver = VersionMatcher.is_version_affected("1.5.0", affected_ranges)
         assert is_affected is False
 
     def test_is_version_affected_after_fix(self) -> None:
@@ -112,9 +108,7 @@ class TestVersionMatcher:
             }
         ]
 
-        is_affected, fix_ver = VersionMatcher.is_version_affected(
-            "2.5.0", affected_ranges
-        )
+        is_affected, fix_ver = VersionMatcher.is_version_affected("2.5.0", affected_ranges)
         assert is_affected is False
 
     def test_is_version_affected_explicit_versions(self) -> None:
@@ -131,9 +125,7 @@ class TestVersionMatcher:
             }
         ]
 
-        is_affected, fix_ver = VersionMatcher.is_version_affected(
-            "1.1.0", affected_ranges
-        )
+        is_affected, fix_ver = VersionMatcher.is_version_affected("1.1.0", affected_ranges)
         assert is_affected is True
         assert fix_ver == "1.3.0"
 
@@ -150,9 +142,7 @@ class TestVersionMatcher:
             }
         ]
 
-        is_affected, fix_ver = VersionMatcher.is_version_affected(
-            "1.0.0", affected_ranges
-        )
+        is_affected, fix_ver = VersionMatcher.is_version_affected("1.0.0", affected_ranges)
         assert is_affected is True
         assert fix_ver is None
 

@@ -451,7 +451,10 @@ class NpmAnalyzer(BaseAnalyzer):
             return ""
 
         # Handle special protocols
-        if any(version_spec.startswith(p) for p in ["file:", "link:", "workspace:", "git:", "git+", "http:", "https:"]):
+        if any(
+            version_spec.startswith(p)
+            for p in ["file:", "link:", "workspace:", "git:", "git+", "http:", "https:"]
+        ):
             return version_spec
 
         # Handle npm: prefix

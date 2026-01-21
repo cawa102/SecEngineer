@@ -483,9 +483,7 @@ class TestNVDClientParsing:
         cve_item = {
             "cve": {
                 "id": "CVE-2021-44228",
-                "descriptions": [
-                    {"lang": "en", "value": "Test description"}
-                ],
+                "descriptions": [{"lang": "en", "value": "Test description"}],
                 "metrics": {
                     "cvssMetricV31": [
                         {
@@ -513,9 +511,7 @@ class TestNVDClientParsing:
         cve_item = {
             "cve": {
                 "id": "CVE-2020-12345",
-                "descriptions": [
-                    {"lang": "en", "value": "Test description"}
-                ],
+                "descriptions": [{"lang": "en", "value": "Test description"}],
                 "metrics": {
                     "cvssMetricV30": [
                         {
@@ -543,9 +539,7 @@ class TestNVDClientParsing:
         cve_item = {
             "cve": {
                 "id": "CVE-2020-12345",
-                "descriptions": [
-                    {"lang": "en", "value": "Test description"}
-                ],
+                "descriptions": [{"lang": "en", "value": "Test description"}],
                 "metrics": {},
                 "configurations": [],
                 "references": [],

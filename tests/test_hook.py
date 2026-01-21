@@ -55,9 +55,7 @@ class TestHookScript:
         output_dir = temp_project / ".cve-sentinel"
         assert output_dir.exists()
 
-    def test_hook_creates_status_file(
-        self, hook_script_path: Path, temp_project: Path
-    ) -> None:
+    def test_hook_creates_status_file(self, hook_script_path: Path, temp_project: Path) -> None:
         """Test that hook creates status.json file."""
         subprocess.run(
             [str(hook_script_path)],
@@ -69,9 +67,7 @@ class TestHookScript:
         status_file = temp_project / ".cve-sentinel" / "status.json"
         assert status_file.exists()
 
-    def test_hook_status_file_format(
-        self, hook_script_path: Path, temp_project: Path
-    ) -> None:
+    def test_hook_status_file_format(self, hook_script_path: Path, temp_project: Path) -> None:
         """Test that status.json has correct format."""
         subprocess.run(
             [str(hook_script_path)],
@@ -113,9 +109,7 @@ class TestHookScript:
         # Output should indicate disabled
         assert "disabled" in result.stdout.lower() or not (temp_project / ".cve-sentinel").exists()
 
-    def test_hook_timeout_compliance(
-        self, hook_script_path: Path, temp_project: Path
-    ) -> None:
+    def test_hook_timeout_compliance(self, hook_script_path: Path, temp_project: Path) -> None:
         """Test that hook completes within timeout (10 seconds)."""
         start_time = time.time()
 
@@ -249,12 +243,9 @@ class TestHookIntegration:
 
             # Create a simple package.json
             package_json = tmp_path / "package.json"
-            package_json.write_text(json.dumps({
-                "name": "test-project",
-                "dependencies": {
-                    "lodash": "4.17.21"
-                }
-            }))
+            package_json.write_text(
+                json.dumps({"name": "test-project", "dependencies": {"lodash": "4.17.21"}})
+            )
 
             # Run hook
             result = subprocess.run(

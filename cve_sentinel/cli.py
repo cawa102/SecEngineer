@@ -201,7 +201,8 @@ def cmd_uninstall(args: argparse.Namespace) -> int:
             # Remove CVE Sentinel hook
             if "hooks" in settings and "sessionStart" in settings["hooks"]:
                 settings["hooks"]["sessionStart"] = [
-                    h for h in settings["hooks"]["sessionStart"]
+                    h
+                    for h in settings["hooks"]["sessionStart"]
                     if not (isinstance(h, dict) and h.get("name") == "cve-sentinel")
                 ]
 

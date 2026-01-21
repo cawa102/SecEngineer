@@ -48,18 +48,12 @@ class ScanResult:
     @property
     def critical_count(self) -> int:
         """Count of critical severity vulnerabilities."""
-        return sum(
-            1 for v in self.vulnerabilities
-            if (v.severity or "").upper() == "CRITICAL"
-        )
+        return sum(1 for v in self.vulnerabilities if (v.severity or "").upper() == "CRITICAL")
 
     @property
     def high_count(self) -> int:
         """Count of high severity vulnerabilities."""
-        return sum(
-            1 for v in self.vulnerabilities
-            if (v.severity or "").upper() == "HIGH"
-        )
+        return sum(1 for v in self.vulnerabilities if (v.severity or "").upper() == "HIGH")
 
 
 class CVESentinelScanner:

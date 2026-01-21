@@ -66,11 +66,24 @@ def sample_vulnerability(sample_package: Package) -> VulnerabilityMatch:
 def multiple_vulnerabilities() -> List[VulnerabilityMatch]:
     """Create multiple vulnerabilities with different severities."""
     packages = [
-        Package(name="lodash", version="4.17.20", ecosystem="npm", source_file=Path("package.json")),
-        Package(name="express", version="4.17.0", ecosystem="npm", source_file=Path("package.json")),
-        Package(name="requests", version="2.25.0", ecosystem="pypi", source_file=Path("requirements.txt")),
-        Package(name="flask", version="1.1.0", ecosystem="pypi", source_file=Path("requirements.txt")),
-        Package(name="unknown-pkg", version="1.0.0", ecosystem="npm", source_file=Path("package.json")),
+        Package(
+            name="lodash", version="4.17.20", ecosystem="npm", source_file=Path("package.json")
+        ),
+        Package(
+            name="express", version="4.17.0", ecosystem="npm", source_file=Path("package.json")
+        ),
+        Package(
+            name="requests",
+            version="2.25.0",
+            ecosystem="pypi",
+            source_file=Path("requirements.txt"),
+        ),
+        Package(
+            name="flask", version="1.1.0", ecosystem="pypi", source_file=Path("requirements.txt")
+        ),
+        Package(
+            name="unknown-pkg", version="1.0.0", ecosystem="npm", source_file=Path("package.json")
+        ),
     ]
 
     return [
@@ -164,7 +177,9 @@ class TestScanSummary:
         assert summary.unknown_count == 0
         assert summary.packages_scanned == 5
 
-    def test_from_multiple_vulnerabilities(self, multiple_vulnerabilities: List[VulnerabilityMatch]) -> None:
+    def test_from_multiple_vulnerabilities(
+        self, multiple_vulnerabilities: List[VulnerabilityMatch]
+    ) -> None:
         """Test creating summary from multiple vulnerabilities."""
         summary = ScanSummary.from_vulnerabilities(multiple_vulnerabilities, packages_scanned=50)
 
@@ -178,7 +193,9 @@ class TestScanSummary:
 
     def test_from_lowercase_severity(self) -> None:
         """Test handling lowercase severity strings."""
-        package = Package(name="test", version="1.0.0", ecosystem="npm", source_file=Path("package.json"))
+        package = Package(
+            name="test", version="1.0.0", ecosystem="npm", source_file=Path("package.json")
+        )
         vuln = VulnerabilityMatch(
             cve_id="CVE-2024-0001",
             package=package,
@@ -196,7 +213,9 @@ class TestScanSummary:
 
     def test_from_invalid_severity(self) -> None:
         """Test handling invalid severity string."""
-        package = Package(name="test", version="1.0.0", ecosystem="npm", source_file=Path("package.json"))
+        package = Package(
+            name="test", version="1.0.0", ecosystem="npm", source_file=Path("package.json")
+        )
         vuln = VulnerabilityMatch(
             cve_id="CVE-2024-0001",
             package=package,
@@ -274,11 +293,15 @@ class TestTerminalColors:
 
     def test_get_severity_color_with_color_enabled(self) -> None:
         """Test getting severity colors when colors enabled."""
-        assert TerminalColors.get_severity_color("CRITICAL", use_color=True) == TerminalColors.CRITICAL
+        assert (
+            TerminalColors.get_severity_color("CRITICAL", use_color=True) == TerminalColors.CRITICAL
+        )
         assert TerminalColors.get_severity_color("HIGH", use_color=True) == TerminalColors.HIGH
         assert TerminalColors.get_severity_color("MEDIUM", use_color=True) == TerminalColors.MEDIUM
         assert TerminalColors.get_severity_color("LOW", use_color=True) == TerminalColors.LOW
-        assert TerminalColors.get_severity_color("UNKNOWN", use_color=True) == TerminalColors.UNKNOWN
+        assert (
+            TerminalColors.get_severity_color("UNKNOWN", use_color=True) == TerminalColors.UNKNOWN
+        )
 
     def test_get_severity_color_with_color_disabled(self) -> None:
         """Test getting severity colors when colors disabled."""
@@ -287,7 +310,9 @@ class TestTerminalColors:
 
     def test_get_severity_color_lowercase(self) -> None:
         """Test that lowercase severity works."""
-        assert TerminalColors.get_severity_color("critical", use_color=True) == TerminalColors.CRITICAL
+        assert (
+            TerminalColors.get_severity_color("critical", use_color=True) == TerminalColors.CRITICAL
+        )
         assert TerminalColors.get_severity_color("high", use_color=True) == TerminalColors.HIGH
 
     def test_get_severity_color_none(self) -> None:
@@ -467,7 +492,9 @@ class TestReporterResults:
         project_path = tmp_path / "test-project"
         project_path.mkdir()
 
-        reporter.write_results(project_path, packages_scanned=1, vulnerabilities=[sample_vulnerability])
+        reporter.write_results(
+            project_path, packages_scanned=1, vulnerabilities=[sample_vulnerability]
+        )
 
         result_path = temp_output_dir / "results.json"
         data = json.loads(result_path.read_text())
