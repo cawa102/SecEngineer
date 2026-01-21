@@ -9,15 +9,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cve_sentinel.cli import (
+    CONFIG_TEMPLATE,
     cmd_init,
     cmd_scan,
     cmd_uninstall,
     cmd_update,
     create_parser,
     main,
-    CONFIG_TEMPLATE,
 )
-
 
 # =============================================================================
 # Parser Tests

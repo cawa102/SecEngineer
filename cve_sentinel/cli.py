@@ -5,15 +5,14 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 from typing import List, Optional
 
+from cve_sentinel.config import ConfigError, load_config
 from cve_sentinel.scanner import CVESentinelScanner, __version__, setup_logging
-from cve_sentinel.config import Config, load_config, ConfigError
 
 logger = logging.getLogger(__name__)
 

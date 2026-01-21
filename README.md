@@ -1,7 +1,7 @@
 # CVE Sentinel
 
 [![CI](https://github.com/cawa102/SecEngineer/actions/workflows/ci.yml/badge.svg)](https://github.com/cawa102/SecEngineer/actions/workflows/ci.yml)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 CVE auto-detection and remediation proposal system for Claude Code. Automatically scans your project dependencies for known vulnerabilities and suggests fixes.
