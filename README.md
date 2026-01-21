@@ -28,7 +28,9 @@
 
 ## Demo
 
-https://github.com/cawa102/cveSentinel/raw/main/assets/cveSentinel.mp4
+<p align="center">
+  <img src="assets/cveSentinel.gif" alt="CVE Sentinel Demo" width="800">
+</p>
 
 ---
 
