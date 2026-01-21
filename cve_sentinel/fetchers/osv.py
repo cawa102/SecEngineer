@@ -69,7 +69,18 @@ class OSVVulnerability:
             if sev.get("type") == "CVSS_V3":
                 score = sev.get("score")
                 if score is not None:
-                    return float(score)
+                    # OSV API may return CVSS vector string instead of numeric score
+                    if isinstance(score, (int, float)):
+                        return float(score)
+                    elif isinstance(score, str):
+                        # Skip CVSS vector strings (e.g., "CVSS:3.1/AV:N/AC:L/...")
+                        if score.startswith("CVSS:"):
+                            continue
+                        # Try to parse numeric string
+                        try:
+                            return float(score)
+                        except ValueError:
+                            continue
         return None
 
     def get_cvss_severity(self) -> Optional[str]:
