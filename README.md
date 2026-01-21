@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/cawa102/SecEngineer/actions/workflows/ci.yml">
-    <img src="https://github.com/cawa102/SecEngineer/actions/workflows/ci.yml/badge.svg" alt="CI">
+  <a href="https://github.com/cawa102/cveSentinel/actions/workflows/ci.yml">
+    <img src="https://github.com/cawa102/cveSentinel/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
   <a href="https://www.python.org/downloads/">
     <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python 3.9+">
@@ -272,8 +272,8 @@ Without an API key, requests are rate-limited to 5 per 30 seconds.
 
 ```bash
 # Clone and install
-git clone https://github.com/cawa102/SecEngineer.git
-cd SecEngineer
+git clone https://github.com/cawa102/cveSentinel.git
+cd cveSentinel
 pip install -e ".[dev]"
 
 # Run tests
