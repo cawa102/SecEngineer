@@ -9,14 +9,15 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cve_sentinel.cli import (
-    CONFIG_TEMPLATE,
     cmd_init,
     cmd_scan,
     cmd_uninstall,
     cmd_update,
     create_parser,
     main,
+    CONFIG_TEMPLATE,
 )
+
 
 # =============================================================================
 # Parser Tests
@@ -48,11 +49,18 @@ class TestParser:
     def test_parser_scan_with_options(self) -> None:
         """Test scan command with options."""
         parser = create_parser()
-        args = parser.parse_args(
-            ["scan", "--path", "/tmp/project", "--verbose", "--fail-on", "CRITICAL"]
-        )
+        args = parser.parse_args([
+            "scan",
+            "/tmp/project",
+            "--level", "2",
+            "--exclude", "test/*",
+            "--verbose",
+            "--fail-on", "CRITICAL"
+        ])
         assert args.command == "scan"
         assert args.path == Path("/tmp/project")
+        assert args.level == 2
+        assert args.exclude == ["test/*"]
         assert args.verbose is True
         assert args.fail_on == "CRITICAL"
 
@@ -190,7 +198,7 @@ class TestScanCommand:
     def test_scan_empty_project(self, tmp_path: Path) -> None:
         """Test scan on empty project."""
         parser = create_parser()
-        args = parser.parse_args(["scan", "--path", str(tmp_path)])
+        args = parser.parse_args(["scan", str(tmp_path)])
 
         result = cmd_scan(args)
 
@@ -199,17 +207,13 @@ class TestScanCommand:
     def test_scan_with_package_json(self, tmp_path: Path) -> None:
         """Test scan with package.json."""
         package_json = tmp_path / "package.json"
-        package_json.write_text(
-            json.dumps(
-                {
-                    "name": "test",
-                    "dependencies": {"lodash": "4.17.21"},
-                }
-            )
-        )
+        package_json.write_text(json.dumps({
+            "name": "test",
+            "dependencies": {"lodash": "4.17.21"},
+        }))
 
         parser = create_parser()
-        args = parser.parse_args(["scan", "--path", str(tmp_path)])
+        args = parser.parse_args(["scan", str(tmp_path)])
 
         result = cmd_scan(args)
 
@@ -221,7 +225,7 @@ class TestScanCommand:
         nonexistent = tmp_path / "nonexistent"
 
         parser = create_parser()
-        args = parser.parse_args(["scan", "--path", str(nonexistent)])
+        args = parser.parse_args(["scan", str(nonexistent)])
 
         result = cmd_scan(args)
 
@@ -275,12 +279,10 @@ class TestUninstallCommand:
         args = parser.parse_args(["uninstall", "--yes"])
 
         # Mock subprocess and file operations
-        with (
-            patch("subprocess.run") as mock_run,
-            patch("pathlib.Path.exists") as mock_exists,
-            patch("pathlib.Path.unlink"),
-            patch("builtins.open", MagicMock()),
-        ):
+        with patch("subprocess.run") as mock_run, \
+             patch("pathlib.Path.exists") as mock_exists, \
+             patch("pathlib.Path.unlink"), \
+             patch("builtins.open", MagicMock()):
             mock_run.return_value = MagicMock(returncode=0)
             mock_exists.return_value = False
 
@@ -308,17 +310,22 @@ class TestUninstallCommand:
 class TestMainFunction:
     """Tests for the main function."""
 
-    def test_main_no_args_shows_help(self, capsys) -> None:
-        """Test main with no args shows help."""
+    def test_main_no_args_runs_scan(self, tmp_path: Path, monkeypatch) -> None:
+        """Test main with no args runs scan on current directory."""
+        # Change to tmp_path so scan runs on empty directory
+        monkeypatch.chdir(tmp_path)
         result = main([])
+        # Should succeed (scan on empty project)
         assert result == 0
-
-        captured = capsys.readouterr()
-        assert "usage:" in captured.out or "commands:" in captured.out
 
     def test_main_scan_command(self, tmp_path: Path) -> None:
         """Test main with scan command."""
-        result = main(["scan", "--path", str(tmp_path)])
+        result = main(["scan", str(tmp_path)])
+        assert result in (0, 1, 2)
+
+    def test_main_scan_with_path_only(self, tmp_path: Path) -> None:
+        """Test main with path only (no scan command)."""
+        result = main([str(tmp_path)])
         assert result in (0, 1, 2)
 
     def test_main_init_command(self, tmp_path: Path) -> None:
@@ -343,7 +350,6 @@ class TestConfigTemplate:
     def test_config_template_valid_yaml(self) -> None:
         """Test config template is valid YAML."""
         import yaml
-
         config = yaml.safe_load(CONFIG_TEMPLATE)
         assert config is not None
         assert "target_path" in config
@@ -353,7 +359,6 @@ class TestConfigTemplate:
     def test_config_template_default_values(self) -> None:
         """Test config template has sensible defaults."""
         import yaml
-
         config = yaml.safe_load(CONFIG_TEMPLATE)
         assert config["target_path"] == "."
         assert config["analysis_level"] == 2

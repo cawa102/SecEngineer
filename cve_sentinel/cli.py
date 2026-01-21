@@ -5,14 +5,15 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 from typing import List, Optional
 
-from cve_sentinel.config import ConfigError, load_config
 from cve_sentinel.scanner import CVESentinelScanner, __version__, setup_logging
+from cve_sentinel.config import Config, load_config, ConfigError
 
 logger = logging.getLogger(__name__)
 
@@ -65,11 +66,19 @@ CVE Sentinel automatically scans dependencies when a Claude Code session starts.
 Check `.cve-sentinel/status.json` for scan status and `.cve-sentinel/results.json` for results.
 
 ### Manual Commands
-- `cve-sentinel scan` - Run a vulnerability scan
-- `cve-sentinel scan --verbose` - Run with detailed output
+```bash
+# Scan current directory (no config file needed)
+cve-sentinel scan
 
-### Configuration
-See `.cve-sentinel.yaml` for scan configuration options.
+# Scan specific path
+cve-sentinel scan /path/to/project
+
+# With options
+cve-sentinel scan --level 2 --exclude "test/*" --verbose
+```
+
+### Configuration (Optional)
+For persistent settings, create `.cve-sentinel.yaml`. CLI options override config file settings.
 """
 
 
@@ -80,10 +89,18 @@ def cmd_scan(args: argparse.Namespace) -> int:
     target_path = args.path.resolve()
 
     try:
+        # Build CLI overrides
+        cli_overrides: dict = {}
+        if args.level is not None:
+            cli_overrides["analysis_level"] = args.level
+        if args.exclude:
+            cli_overrides["exclude"] = args.exclude
+
         config = load_config(
             base_path=target_path,
             validate=True,
             require_api_key=False,
+            cli_overrides=cli_overrides,
         )
 
         scanner = CVESentinelScanner(config)
@@ -170,8 +187,8 @@ def cmd_init(args: argparse.Namespace) -> int:
 
     print("\nCVE Sentinel initialized successfully!")
     print("\nNext steps:")
-    print("  1. Configure .cve-sentinel.yaml if needed")
-    print("  2. Run: cve-sentinel scan")
+    print("  1. Run: cve-sentinel scan")
+    print("  2. (Optional) Customize .cve-sentinel.yaml for persistent settings")
 
     return 0
 
@@ -201,8 +218,7 @@ def cmd_uninstall(args: argparse.Namespace) -> int:
             # Remove CVE Sentinel hook
             if "hooks" in settings and "sessionStart" in settings["hooks"]:
                 settings["hooks"]["sessionStart"] = [
-                    h
-                    for h in settings["hooks"]["sessionStart"]
+                    h for h in settings["hooks"]["sessionStart"]
                     if not (isinstance(h, dict) and h.get("name") == "cve-sentinel")
                 ]
 
@@ -269,14 +285,14 @@ def cmd_update(args: argparse.Namespace) -> int:
     try:
         cmd = [sys.executable, "-m", "pip", "install", "--upgrade", "cve-sentinel"]
         if args.verbose:
-            result = subprocess.run(cmd, text=True)
+            result = subprocess.run(cmd)
         else:
             result = subprocess.run(cmd, capture_output=True, text=True)
 
         if result.returncode == 0:
             print("CVE Sentinel package updated successfully")
         else:
-            if result.stderr:
+            if hasattr(result, "stderr") and result.stderr:
                 print(f"Update failed: {result.stderr}")
             return 1
 
@@ -358,11 +374,25 @@ def create_parser() -> argparse.ArgumentParser:
         description="Scan project dependencies for known CVE vulnerabilities",
     )
     scan_parser.add_argument(
-        "--path",
-        "-p",
+        "path",
         type=Path,
+        nargs="?",
         default=Path("."),
         help="Path to the project directory (default: current directory)",
+    )
+    scan_parser.add_argument(
+        "--level",
+        "-l",
+        type=int,
+        choices=[1, 2, 3],
+        default=None,
+        help="Analysis level: 1=manifest only, 2=include lock files, 3=include import scanning",
+    )
+    scan_parser.add_argument(
+        "--exclude",
+        "-e",
+        action="append",
+        help="Path patterns to exclude (can be specified multiple times)",
     )
     scan_parser.add_argument(
         "--verbose",
@@ -450,19 +480,20 @@ def create_parser() -> argparse.ArgumentParser:
 def main(args: Optional[List[str]] = None) -> int:
     """Main entry point for CVE Sentinel CLI."""
     parser = create_parser()
+
+    # Handle shorthand: if first arg is not a known command, treat as path for scan
+    known_commands = {"scan", "init", "uninstall", "update"}
+    if args and args[0] not in known_commands and not args[0].startswith("-"):
+        # First arg looks like a path, prepend "scan"
+        args = ["scan"] + args
+
     parsed_args = parser.parse_args(args)
 
     # Default to scan if no command specified
     if parsed_args.command is None:
-        # Check if there are any arguments that look like scan arguments
-        if args and any(arg.startswith("-") for arg in args):
-            # Re-parse with scan as default
-            scan_args = ["scan"] + (args or [])
-            parsed_args = parser.parse_args(scan_args)
-        else:
-            # Show help if no command
-            parser.print_help()
-            return 0
+        # No arguments at all - run scan on current directory
+        scan_args = ["scan"]
+        parsed_args = parser.parse_args(scan_args)
 
     # Execute command
     if hasattr(parsed_args, "func"):

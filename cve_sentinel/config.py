@@ -166,19 +166,22 @@ def load_config(
     base_path: Optional[Path] = None,
     validate: bool = True,
     require_api_key: bool = True,
+    cli_overrides: Optional[dict[str, Any]] = None,
 ) -> Config:
-    """Load configuration from file and environment variables.
+    """Load configuration from file, environment variables, and CLI arguments.
 
     Configuration is loaded in the following order (later values override earlier):
     1. Default values
     2. YAML config file (.cve-sentinel.yaml or .cve-sentinel.yml)
     3. Environment variables
+    4. CLI arguments (highest priority)
 
     Args:
         base_path: Base directory to search for config file.
             Defaults to current working directory.
         validate: Whether to validate the configuration.
         require_api_key: Whether to require NVD API key in validation.
+        cli_overrides: Dictionary of CLI argument overrides (highest priority).
 
     Returns:
         Loaded and optionally validated Config object.
@@ -211,6 +214,10 @@ def load_config(
 
     # Override with environment variables
     config_data.update(_load_env_vars())
+
+    # Override with CLI arguments (highest priority)
+    if cli_overrides:
+        config_data.update(cli_overrides)
 
     # Convert target_path to absolute path relative to base_path
     if "target_path" in config_data:

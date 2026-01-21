@@ -50,37 +50,70 @@ CVE Sentinel - A Claude Code plugin that automatically detects CVE vulnerabiliti
 ├── results.json     # Scan results with vulnerabilities
 └── cache/           # CVE data cache
 
-.cve-sentinel.yaml   # Project configuration
+.cve-sentinel.yaml   # Project configuration (optional)
 ```
 
-## Configuration
+## Usage
 
-Configuration via `.cve-sentinel.yaml`:
+```bash
+# Scan current directory (no config file needed)
+cve-sentinel scan
+
+# Scan specific path
+cve-sentinel scan /path/to/project
+
+# With options (override config file settings)
+cve-sentinel scan --level 2 --exclude "test/*" --verbose
+```
+
+## Configuration (Optional)
+
+Configuration via `.cve-sentinel.yaml` for persistent settings:
 - `target_path`: Scan target directory
 - `exclude`: Paths to exclude
 - `analysis_level`: 1-3
 - `auto_scan_on_startup`: Enable/disable automatic scanning
 - `cache_ttl_hours`: Cache expiration
 
+**Priority order (later overrides earlier):**
+1. Default values
+2. `.cve-sentinel.yaml` config file
+3. Environment variables
+4. CLI arguments (highest priority)
+
 ## NVD API Key
 
-Required for optimal performance. Store in environment variable:
+Required. Store in environment variable for security.
+
+## Documentation
+
+Refer to `/docs` directory for detailed specifications:
+- `requirement.md` - Full requirements specification (in Japanese)
+- `tickets/README.md` - Development ticket management and progress tracking
+- `tickets/T001_*.md` - Individual ticket details with tasks and acceptance criteria
+
+## Development Workflow
+
+### Ticket Management
+Each ticket in `/docs/tickets/` contains:
+- **状態 (Status)**: TODO | IN_PROGRESS | DONE
+- **チェックリスト**: Detailed task breakdown with checkboxes
+
+### Checklist Usage
+1. Before starting a ticket, update its status to `IN_PROGRESS`
+2. As you complete each task, mark it with `[x]`:
+   ```markdown
+   - [x] Completed task
+   - [ ] Pending task
+   ```
+3. When all checklist items are done, update status to `DONE`
+4. Update `tickets/README.md` status column accordingly
+
+### Example Workflow
 ```bash
-export NVD_API_KEY=your-api-key-here
-```
-
-## Development
-
-```bash
-# Install with development dependencies
-pip install -e ".[dev]"
-
-# Run tests
-pytest
-
-# Run linting
-ruff check .
-
-# Run type checking
-mypy cve_sentinel
+# 1. Read the ticket
+# 2. Update status: TODO → IN_PROGRESS
+# 3. Implement tasks, checking off items as completed
+# 4. Update status: IN_PROGRESS → DONE
+# 5. Update README.md ticket table
 ```
