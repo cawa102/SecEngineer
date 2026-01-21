@@ -591,8 +591,8 @@ class TestReporterCLIOutput:
 
         result = output.getvalue()
         assert "✓" in result
-        assert "脆弱性は検出されませんでした" in result
-        assert "45パッケージ" in result
+        assert "No vulnerabilities detected" in result
+        assert "45 packages" in result
 
     def test_print_summary_with_vulnerabilities(
         self,
@@ -611,9 +611,9 @@ class TestReporterCLIOutput:
 
         result = output.getvalue()
         assert "⚠" in result
-        assert "5件の脆弱性を検出" in result
+        assert "5 vulnerabilities found" in result
         assert "CVE-2024-0001" in result
-        assert "深刻度別" in result
+        assert "By Severity" in result
 
     def test_print_summary_sorted_by_severity(
         self,
@@ -654,12 +654,12 @@ class TestReporterCLIOutput:
         result = output.getvalue()
         assert "[CVE-2024-12345]" in result
         assert "lodash@4.17.20" in result
-        assert "深刻度: CRITICAL" in result
+        assert "Severity: CRITICAL" in result
         assert "CVSS 9.8" in result
-        assert "説明:" in result
-        assert "該当箇所:" in result
+        assert "Description:" in result
+        assert "Affected Files:" in result
         assert "package.json:15" in result
-        assert "対処:" in result
+        assert "Fix:" in result
         assert "npm install lodash@4.17.21" in result
 
     def test_print_vulnerability_truncates_description(

@@ -334,9 +334,7 @@ class Reporter:
         """
         # Header with warning
         warning_symbol = TerminalColors.WARNING_SYMBOL
-        header = (
-            f"{warning_symbol} CVEスキャン完了: {summary.total_vulnerabilities}件の脆弱性を検出"
-        )
+        header = f"{warning_symbol} CVE Scan Complete: {summary.total_vulnerabilities} vulnerabilities found"
         output.write(self._colorize(header, TerminalColors.RED + TerminalColors.BOLD) + "\n\n")
 
         # Severity summary
@@ -366,9 +364,9 @@ class Reporter:
             output: Output stream.
         """
         check_symbol = TerminalColors.CHECK_SYMBOL
-        header = f"{check_symbol} CVEスキャン完了: 脆弱性は検出されませんでした"
+        header = f"{check_symbol} CVE Scan Complete: No vulnerabilities detected"
         output.write(self._colorize(header, TerminalColors.GREEN + TerminalColors.BOLD) + "\n")
-        output.write(f"  スキャン対象: {summary.packages_scanned}パッケージ\n")
+        output.write(f"  Scanned: {summary.packages_scanned} packages\n")
 
     def _print_severity_summary(self, summary: ScanSummary, output: TextIO) -> None:
         """Print severity breakdown summary.
@@ -400,9 +398,9 @@ class Reporter:
             parts.append(self._colorize(unknown_text, TerminalColors.UNKNOWN))
 
         if parts:
-            output.write("  深刻度別: " + " | ".join(parts) + "\n")
+            output.write("  By Severity: " + " | ".join(parts) + "\n")
 
-        output.write(f"  スキャン対象: {summary.packages_scanned}パッケージ\n")
+        output.write(f"  Scanned: {summary.packages_scanned} packages\n")
 
     def _print_vulnerability(self, vuln: VulnerabilityMatch, output: TextIO) -> None:
         """Print a single vulnerability entry.
@@ -421,18 +419,18 @@ class Reporter:
         # Severity and CVSS score
         severity_text = vuln.severity or "UNKNOWN"
         cvss_text = f"CVSS {vuln.cvss_score}" if vuln.cvss_score else "CVSS N/A"
-        output.write(f"  深刻度: {self._colorize(severity_text, severity_color)} ({cvss_text})\n")
+        output.write(f"  Severity: {self._colorize(severity_text, severity_color)} ({cvss_text})\n")
 
         # Description (truncated)
         if vuln.description:
             desc = (
                 vuln.description[:100] + "..." if len(vuln.description) > 100 else vuln.description
             )
-            output.write(f"  説明: {desc}\n")
+            output.write(f"  Description: {desc}\n")
 
         # Affected files
         if vuln.affected_files:
-            output.write("  該当箇所:\n")
+            output.write("  Affected Files:\n")
             for af in vuln.affected_files[:5]:  # Limit to 5 files
                 file_path = af.get("file", "unknown")
                 line_num = af.get("line")
@@ -443,7 +441,7 @@ class Reporter:
 
         # Fix command
         if vuln.fix_command:
-            fix_text = f"  対処: {vuln.fix_command}"
+            fix_text = f"  Fix: {vuln.fix_command}"
             output.write(self._colorize(fix_text, TerminalColors.GREEN) + "\n")
 
         output.write("\n")
