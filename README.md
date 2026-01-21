@@ -1,137 +1,192 @@
-# CVE Sentinel
+<p align="center">
+  <img src="assets/icon.png" alt="CVE Sentinel" width="180" height="180">
+</p>
 
-[![CI](https://github.com/cawa102/SecEngineer/actions/workflows/ci.yml/badge.svg)](https://github.com/cawa102/SecEngineer/actions/workflows/ci.yml)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<h1 align="center">CVE Sentinel</h1>
 
-CVE auto-detection and remediation proposal system for Claude Code. Automatically scans your project dependencies for known vulnerabilities and suggests fixes.
+<p align="center">
+  <strong>Your AI-Powered Security Guardian for Claude Code</strong>
+</p>
 
-## Features
+<p align="center">
+  Automatically detect vulnerabilities in your dependencies before they become threats.
+</p>
 
-- **Multi-source CVE Detection**: Fetches vulnerability data from NVD API 2.0 and Google OSV
-- **Multi-language Support**: Analyzes dependencies across 7+ languages
-- **Three Analysis Levels**: From manifest-only to full source code import scanning
-- **Smart Matching**: CPE-based vulnerability matching with version range checking
-- **Remediation Proposals**: Suggests fix versions and upgrade commands
-- **Claude Code Integration**: Runs as a session hook for automatic scanning
+<p align="center">
+  <a href="https://github.com/cawa102/SecEngineer/actions/workflows/ci.yml">
+    <img src="https://github.com/cawa102/SecEngineer/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <a href="https://www.python.org/downloads/">
+    <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python 3.9+">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
+  </a>
+</p>
 
-## Supported Languages
+---
 
-| Language | Package Managers | Manifest Files | Lock Files |
-|----------|-----------------|----------------|------------|
-| JavaScript/TypeScript | npm, yarn, pnpm | package.json | package-lock.json, yarn.lock, pnpm-lock.yaml |
-| Python | pip, poetry, pipenv | requirements.txt, pyproject.toml, Pipfile | poetry.lock, Pipfile.lock |
-| Go | go mod | go.mod | go.sum |
-| Java | Maven, Gradle | pom.xml, build.gradle | - |
-| Ruby | Bundler | Gemfile | Gemfile.lock |
-| Rust | Cargo | Cargo.toml | Cargo.lock |
-| PHP | Composer | composer.json | composer.lock |
+## Why CVE Sentinel?
 
-## Installation
+Every day, new vulnerabilities are discovered in popular packages. **CVE Sentinel** integrates seamlessly with Claude Code to automatically scan your project dependencies and alert you to security risks - before you ship vulnerable code.
 
-```bash
-pip install cve-sentinel
-```
+### Key Features
 
-Or install from source:
+- **Automatic Scanning** - Runs silently in the background when you start Claude Code
+- **Multi-Source Intelligence** - Combines data from NVD and Google OSV for comprehensive coverage
+- **7+ Languages Supported** - JavaScript, Python, Go, Java, Ruby, Rust, PHP and more
+- **Smart Analysis** - Three levels from quick manifest scans to deep source code analysis
+- **Actionable Fixes** - Get specific upgrade commands, not just vulnerability reports
 
-```bash
-git clone https://github.com/cawa102/SecEngineer.git
-cd SecEngineer
-pip install -e .
-```
+---
 
 ## Quick Start
 
 ```bash
-# Scan current directory
-cve-sentinel
+# Install CVE Sentinel
+pip install cve-sentinel
 
-# Scan specific path
-cve-sentinel --path /path/to/project
+# Scan your project
+cve-sentinel scan
 
-# Scan with specific analysis level
-cve-sentinel --level 3
+# Or initialize for automatic scanning with Claude Code
+cve-sentinel init
 ```
+
+That's it! CVE Sentinel will now protect your projects automatically.
+
+---
+
+## How It Works
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  Your Project   │────▶│  CVE Sentinel   │────▶│  Security Report│
+│                 │     │                 │     │                 │
+│ package.json    │     │ ┌─────────────┐ │     │ 3 Critical      │
+│ requirements.txt│     │ │ NVD API 2.0 │ │     │ 5 High          │
+│ go.mod          │     │ └─────────────┘ │     │ 2 Medium        │
+│ Cargo.toml      │     │ ┌─────────────┐ │     │                 │
+│ ...             │     │ │ Google OSV  │ │     │ + Fix Commands  │
+│                 │     │ └─────────────┘ │     │                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+---
+
+## Supported Languages
+
+| Language | Package Managers | Files Analyzed |
+|:--------:|:-----------------|:---------------|
+| **JavaScript** | npm, yarn, pnpm | `package.json`, `package-lock.json`, `yarn.lock` |
+| **Python** | pip, poetry, pipenv | `requirements.txt`, `pyproject.toml`, `Pipfile` |
+| **Go** | go mod | `go.mod`, `go.sum` |
+| **Java** | Maven, Gradle | `pom.xml`, `build.gradle` |
+| **Ruby** | Bundler | `Gemfile`, `Gemfile.lock` |
+| **Rust** | Cargo | `Cargo.toml`, `Cargo.lock` |
+| **PHP** | Composer | `composer.json`, `composer.lock` |
+
+---
+
+## Analysis Levels
+
+Choose the depth of analysis that fits your needs:
+
+| Level | What It Scans | Best For |
+|:-----:|:--------------|:---------|
+| **1** | Manifest files only | Quick CI checks |
+| **2** | + Lock files (transitive deps) | Regular development |
+| **3** | + Source code imports | Pre-release audits |
+
+```bash
+# Quick scan (Level 1)
+cve-sentinel scan --level 1
+
+# Deep scan with source analysis (Level 3)
+cve-sentinel scan --level 3
+```
+
+---
 
 ## Configuration
 
 Create `.cve-sentinel.yaml` in your project root:
 
 ```yaml
-# Target directory to scan
+# Scan settings
 target_path: ./
+analysis_level: 2
 
-# Paths to exclude from scanning
+# Exclude paths (e.g., test fixtures)
 exclude:
   - node_modules/
   - vendor/
   - .venv/
 
-# Analysis level (1-3)
-# 1: Direct dependencies from manifest files only
-# 2: Include transitive dependencies from lock files
-# 3: Full source code import scanning
-analysis_level: 3
-
-# Enable automatic scanning on Claude Code session start
-auto_scan_on_startup: true
-
-# Cache expiration in hours
+# Cache settings
 cache_ttl_hours: 24
+
+# Auto-scan on Claude Code startup
+auto_scan_on_startup: true
 ```
 
-## Analysis Levels
-
-| Level | Description | Speed | Coverage |
-|-------|-------------|-------|----------|
-| **1** | Manifest files only (package.json, requirements.txt, etc.) | Fast | Direct dependencies |
-| **2** | + Lock files (package-lock.json, poetry.lock, etc.) | Medium | All dependencies |
-| **3** | + Source code import scanning | Thorough | Includes file:line locations |
-
-## NVD API Key
-
-For best results, obtain an NVD API key from [nvd.nist.gov](https://nvd.nist.gov/developers/request-an-api-key) and set it as an environment variable:
-
-```bash
-export NVD_API_KEY=your-api-key-here
-```
-
-Without an API key, requests are rate-limited to 5 requests per 30 seconds.
+---
 
 ## Claude Code Integration
 
-CVE Sentinel can run automatically when you start a Claude Code session. Add the session hook to your Claude Code settings to enable automatic vulnerability scanning.
+CVE Sentinel is designed to work seamlessly with [Claude Code](https://claude.ai/code). After running `cve-sentinel init`, it will:
 
-## Output
+1. Automatically scan your project when you start a Claude Code session
+2. Report vulnerabilities directly in your conversation
+3. Suggest fixes that Claude can help you implement
 
-CVE Sentinel generates results in `.cve-sentinel/results.json`:
+---
+
+## Sample Output
 
 ```json
 {
   "scan_time": "2025-01-21T00:00:00Z",
+  "summary": {
+    "critical": 1,
+    "high": 3,
+    "medium": 5,
+    "low": 2
+  },
   "vulnerabilities": [
     {
       "cve_id": "CVE-2024-XXXXX",
-      "package": "example-package",
-      "installed_version": "1.0.0",
-      "severity": "HIGH",
-      "description": "...",
-      "fix_version": "1.0.1",
-      "remediation": "npm update example-package"
+      "package": "lodash",
+      "installed_version": "4.17.20",
+      "severity": "CRITICAL",
+      "description": "Prototype pollution vulnerability...",
+      "fix_version": "4.17.21",
+      "remediation": "npm update lodash"
     }
   ]
 }
 ```
 
+---
+
+## NVD API Key (Recommended)
+
+For faster scanning, get a free API key from [NVD](https://nvd.nist.gov/developers/request-an-api-key):
+
+```bash
+export NVD_API_KEY=your-api-key-here
+```
+
+Without an API key, requests are rate-limited to 5 per 30 seconds.
+
+---
+
 ## Development
 
 ```bash
-# Clone repository
+# Clone and install
 git clone https://github.com/cawa102/SecEngineer.git
 cd SecEngineer
-
-# Install development dependencies
 pip install -e ".[dev]"
 
 # Run tests
@@ -139,15 +194,27 @@ pytest
 
 # Run linting
 ruff check .
-
-# Run type checking
-mypy cve_sentinel
 ```
+
+---
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Whether it's:
+- Adding support for new languages
+- Improving vulnerability detection
+- Enhancing the user experience
+
+Please feel free to submit a Pull Request.
+
+---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <sub>Built with security in mind. Powered by Claude Code.</sub>
+</p>
