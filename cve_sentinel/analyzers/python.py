@@ -25,18 +25,28 @@ class PythonAnalyzer(BaseAnalyzer):
 
     @property
     def manifest_patterns(self) -> List[str]:
-        return ["requirements.txt", "requirements*.txt", "pyproject.toml", "Pipfile"]
+        default_patterns = ["requirements.txt", "requirements*.txt", "pyproject.toml", "Pipfile"]
+        custom = self._custom_patterns.get("manifests", [])
+        return default_patterns + custom
 
     @property
     def lock_patterns(self) -> List[str]:
-        return ["poetry.lock", "Pipfile.lock"]
+        default_patterns = ["poetry.lock", "Pipfile.lock"]
+        custom = self._custom_patterns.get("locks", [])
+        return default_patterns + custom
 
-    def __init__(self, exclude_patterns: Optional[List[str]] = None) -> None:
+    def __init__(
+        self,
+        exclude_patterns: Optional[List[str]] = None,
+        custom_patterns: Optional[Dict[str, List[str]]] = None,
+    ) -> None:
         """Initialize the analyzer.
 
         Args:
             exclude_patterns: Glob patterns to exclude from file detection
+            custom_patterns: Optional custom file patterns {"manifests": [...], "locks": [...]}
         """
+        self._custom_patterns = custom_patterns or {}
         self._file_detector = FileDetector(exclude_patterns=exclude_patterns)
 
     def detect_files(self, path: Path) -> List[Path]:

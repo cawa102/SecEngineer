@@ -51,6 +51,20 @@ cache_ttl_hours: 24
 # Get your key at: https://nvd.nist.gov/developers/request-an-api-key
 # Best practice: Set via environment variable CVE_SENTINEL_NVD_API_KEY
 # nvd_api_key: "your-api-key-here"
+
+# Custom file patterns for dependency detection (optional)
+# Use this to scan non-standard dependency files
+# Valid ecosystems: javascript, python, go, java, ruby, rust, php
+# custom_patterns:
+#   python:
+#     manifests:
+#       - "deps/*.txt"
+#       - "custom-requirements.txt"
+#     locks:
+#       - "custom.lock"
+#   javascript:
+#     manifests:
+#       - "dependencies.json"
 """
 
 # CLAUDE.md addition template

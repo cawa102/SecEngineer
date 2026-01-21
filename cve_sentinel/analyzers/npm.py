@@ -35,20 +35,30 @@ class NpmAnalyzer(BaseAnalyzer):
     @property
     def manifest_patterns(self) -> List[str]:
         """Return glob patterns for manifest files."""
-        return ["package.json"]
+        default_patterns = ["package.json"]
+        custom = self._custom_patterns.get("manifests", [])
+        return default_patterns + custom
 
     @property
     def lock_patterns(self) -> List[str]:
         """Return glob patterns for lock files."""
-        return ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"]
+        default_patterns = ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"]
+        custom = self._custom_patterns.get("locks", [])
+        return default_patterns + custom
 
-    def __init__(self, analysis_level: int = 2) -> None:
+    def __init__(
+        self,
+        analysis_level: int = 2,
+        custom_patterns: Optional[Dict[str, List[str]]] = None,
+    ) -> None:
         """Initialize NPM analyzer.
 
         Args:
             analysis_level: Analysis depth (1=manifest only, 2=include lock files)
+            custom_patterns: Optional custom file patterns {"manifests": [...], "locks": [...]}
         """
         self.analysis_level = analysis_level
+        self._custom_patterns = custom_patterns or {}
         self._file_detector = FileDetector()
 
     def detect_files(self, path: Path) -> List[Path]:

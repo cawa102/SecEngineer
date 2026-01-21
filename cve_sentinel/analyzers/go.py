@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import List
+from typing import Dict, List, Optional
 
 from cve_sentinel.analyzers.base import (
     AnalyzerRegistry,
@@ -30,16 +30,30 @@ class GoAnalyzer(BaseAnalyzer):
     @property
     def manifest_patterns(self) -> List[str]:
         """Return glob patterns for manifest files."""
-        return ["go.mod"]
+        default_patterns = ["go.mod"]
+        custom = self._custom_patterns.get("manifests", [])
+        return default_patterns + custom
 
     @property
     def lock_patterns(self) -> List[str]:
         """Return glob patterns for lock files."""
-        return ["go.sum"]
+        default_patterns = ["go.sum"]
+        custom = self._custom_patterns.get("locks", [])
+        return default_patterns + custom
 
-    def __init__(self, analysis_level: int = 2) -> None:
-        """Initialize Go analyzer."""
+    def __init__(
+        self,
+        analysis_level: int = 2,
+        custom_patterns: Optional[Dict[str, List[str]]] = None,
+    ) -> None:
+        """Initialize Go analyzer.
+
+        Args:
+            analysis_level: Analysis depth (1=manifest only, 2=include lock files)
+            custom_patterns: Optional custom file patterns {"manifests": [...], "locks": [...]}
+        """
         self.analysis_level = analysis_level
+        self._custom_patterns = custom_patterns or {}
         self._file_detector = FileDetector()
 
     def detect_files(self, path: Path) -> List[Path]:

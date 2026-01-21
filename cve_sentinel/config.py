@@ -46,6 +46,7 @@ class Config:
     auto_scan_on_startup: bool = True
     cache_ttl_hours: int = 24
     nvd_api_key: Optional[str] = None
+    custom_patterns: Optional[dict[str, dict[str, list[str]]]] = None
 
     def __post_init__(self) -> None:
         """Convert target_path to Path if string."""
@@ -128,6 +129,89 @@ def _get_config_path_from_env() -> Optional[Path]:
     return None
 
 
+def _validate_custom_patterns(
+    custom_patterns: Optional[dict[str, dict[str, list[str]]]]
+) -> list[str]:
+    """Validate custom_patterns configuration.
+
+    Args:
+        custom_patterns: The custom_patterns config value to validate.
+
+    Returns:
+        List of validation error messages (empty if valid).
+    """
+    errors: list[str] = []
+
+    if custom_patterns is None:
+        return errors
+
+    if not isinstance(custom_patterns, dict):
+        errors.append("custom_patterns must be a dictionary")
+        return errors
+
+    # Valid ecosystem names (including common aliases)
+    valid_ecosystems = {
+        "javascript",
+        "npm",
+        "python",
+        "pypi",
+        "go",
+        "java",
+        "maven",
+        "gradle",
+        "ruby",
+        "rubygems",
+        "rust",
+        "crates.io",
+        "php",
+        "packagist",
+    }
+
+    valid_pattern_types = {"manifests", "locks"}
+
+    for ecosystem, patterns_dict in custom_patterns.items():
+        if ecosystem not in valid_ecosystems:
+            errors.append(
+                f"custom_patterns: unknown ecosystem '{ecosystem}'. "
+                f"Valid ecosystems: {', '.join(sorted(valid_ecosystems))}"
+            )
+            continue
+
+        if not isinstance(patterns_dict, dict):
+            errors.append(
+                f"custom_patterns.{ecosystem}: must be a dictionary "
+                "with 'manifests' and/or 'locks' keys"
+            )
+            continue
+
+        for pattern_type, patterns in patterns_dict.items():
+            if pattern_type not in valid_pattern_types:
+                errors.append(
+                    f"custom_patterns.{ecosystem}: unknown pattern type '{pattern_type}'. "
+                    "Valid types: manifests, locks"
+                )
+                continue
+
+            if not isinstance(patterns, list):
+                errors.append(
+                    f"custom_patterns.{ecosystem}.{pattern_type}: must be a list of strings"
+                )
+                continue
+
+            for i, pattern in enumerate(patterns):
+                if not isinstance(pattern, str):
+                    errors.append(
+                        f"custom_patterns.{ecosystem}.{pattern_type}[{i}]: must be a string"
+                    )
+                elif not pattern:
+                    errors.append(
+                        f"custom_patterns.{ecosystem}.{pattern_type}[{i}]: "
+                        "pattern cannot be empty"
+                    )
+
+    return errors
+
+
 def _validate_config(config: Config) -> None:
     """Validate configuration values.
 
@@ -157,6 +241,9 @@ def _validate_config(config: Config) -> None:
             "nvd_api_key is required. Set CVE_SENTINEL_NVD_API_KEY environment variable "
             "or add nvd_api_key to .cve-sentinel.yaml"
         )
+
+    # Validate custom_patterns
+    errors.extend(_validate_custom_patterns(config.custom_patterns))
 
     if errors:
         raise ConfigValidationError("\n".join(errors))
@@ -243,6 +330,7 @@ def load_config(
                 errors.append(f"cache_ttl_hours must be positive, got {config.cache_ttl_hours}")
             if not config.target_path.exists():
                 errors.append(f"target_path does not exist: {config.target_path}")
+            errors.extend(_validate_custom_patterns(config.custom_patterns))
             if errors:
                 raise ConfigValidationError("\n".join(errors))
         else:

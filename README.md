@@ -185,6 +185,40 @@ CLI options override configuration file settings.
 
 ---
 
+## Custom File Patterns
+
+Projects sometimes use non-standard file names for their dependencies. CVE Sentinel lets you specify additional file patterns to scan:
+
+```yaml
+# .cve-sentinel.yaml
+custom_patterns:
+  python:
+    manifests:
+      - "deps/*.txt"
+      - "requirements-*.txt"
+    locks:
+      - "custom.lock"
+  javascript:
+    manifests:
+      - "dependencies.json"
+```
+
+### Supported Ecosystems
+
+| Config Key | Aliases | Default Files |
+|:-----------|:--------|:--------------|
+| `javascript` | `npm` | `package.json`, `package-lock.json`, `yarn.lock` |
+| `python` | `pypi` | `requirements.txt`, `pyproject.toml`, `Pipfile` |
+| `go` | - | `go.mod`, `go.sum` |
+| `java` | `maven`, `gradle` | `pom.xml`, `build.gradle` |
+| `ruby` | `rubygems` | `Gemfile`, `Gemfile.lock` |
+| `rust` | `crates.io` | `Cargo.toml`, `Cargo.lock` |
+| `php` | `packagist` | `composer.json`, `composer.lock` |
+
+Custom patterns **extend** the defaults - your standard files are always scanned.
+
+---
+
 ## Claude Code Integration
 
 CVE Sentinel is designed to work seamlessly with [Claude Code](https://claude.ai/code). After running `cve-sentinel init`, it will:

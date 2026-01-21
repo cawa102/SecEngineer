@@ -141,17 +141,74 @@ class CVESentinelScanner:
         registry.clear()
 
         analysis_level = self.config.analysis_level
+        custom_patterns = self.config.custom_patterns or {}
 
-        # Register analyzers with appropriate analysis level
+        # Map ecosystem names to their aliases for custom_patterns lookup
+        # Users can use either the common name or the ecosystem name
+        ecosystem_aliases = {
+            "npm": ["javascript", "npm"],
+            "pypi": ["python", "pypi"],
+            "go": ["go"],
+            "maven": ["java", "maven", "gradle"],
+            "rubygems": ["ruby", "rubygems"],
+            "crates.io": ["rust", "crates.io"],
+            "packagist": ["php", "packagist"],
+        }
+
+        def get_custom_patterns_for(ecosystem: str) -> Optional[dict]:
+            """Get custom patterns for an ecosystem, checking aliases."""
+            for alias in ecosystem_aliases.get(ecosystem, []):
+                if alias in custom_patterns:
+                    return custom_patterns[alias]
+            return None
+
+        # Register analyzers with appropriate analysis level and custom patterns
         # Note: PythonAnalyzer uses exclude_patterns instead of analysis_level
-        registry.register(NpmAnalyzer(analysis_level=analysis_level))
-        registry.register(PythonAnalyzer())  # Uses all patterns by default
-        registry.register(GoAnalyzer(analysis_level=analysis_level))
-        registry.register(MavenAnalyzer(analysis_level=analysis_level))
-        registry.register(GradleAnalyzer(analysis_level=analysis_level))
-        registry.register(RubyAnalyzer(analysis_level=analysis_level))
-        registry.register(RustAnalyzer(analysis_level=analysis_level))
-        registry.register(PhpAnalyzer(analysis_level=analysis_level))
+        registry.register(
+            NpmAnalyzer(
+                analysis_level=analysis_level,
+                custom_patterns=get_custom_patterns_for("npm"),
+            )
+        )
+        registry.register(
+            PythonAnalyzer(custom_patterns=get_custom_patterns_for("pypi"))
+        )
+        registry.register(
+            GoAnalyzer(
+                analysis_level=analysis_level,
+                custom_patterns=get_custom_patterns_for("go"),
+            )
+        )
+        registry.register(
+            MavenAnalyzer(
+                analysis_level=analysis_level,
+                custom_patterns=get_custom_patterns_for("maven"),
+            )
+        )
+        registry.register(
+            GradleAnalyzer(
+                analysis_level=analysis_level,
+                custom_patterns=get_custom_patterns_for("maven"),
+            )
+        )
+        registry.register(
+            RubyAnalyzer(
+                analysis_level=analysis_level,
+                custom_patterns=get_custom_patterns_for("rubygems"),
+            )
+        )
+        registry.register(
+            RustAnalyzer(
+                analysis_level=analysis_level,
+                custom_patterns=get_custom_patterns_for("crates.io"),
+            )
+        )
+        registry.register(
+            PhpAnalyzer(
+                analysis_level=analysis_level,
+                custom_patterns=get_custom_patterns_for("packagist"),
+            )
+        )
 
     def scan(self, target_path: Path) -> ScanResult:
         """Perform a CVE scan on the target path.

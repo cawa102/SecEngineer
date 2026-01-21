@@ -33,16 +33,30 @@ class MavenAnalyzer(BaseAnalyzer):
     @property
     def manifest_patterns(self) -> List[str]:
         """Return glob patterns for manifest files."""
-        return ["pom.xml"]
+        default_patterns = ["pom.xml"]
+        custom = self._custom_patterns.get("manifests", [])
+        return default_patterns + custom
 
     @property
     def lock_patterns(self) -> List[str]:
         """Return glob patterns for lock files."""
-        return []  # Maven doesn't have a standard lock file
+        default_patterns: List[str] = []  # Maven doesn't have a standard lock file
+        custom = self._custom_patterns.get("locks", [])
+        return default_patterns + custom
 
-    def __init__(self, analysis_level: int = 1) -> None:
-        """Initialize Maven analyzer."""
+    def __init__(
+        self,
+        analysis_level: int = 1,
+        custom_patterns: Optional[Dict[str, List[str]]] = None,
+    ) -> None:
+        """Initialize Maven analyzer.
+
+        Args:
+            analysis_level: Analysis depth (1=manifest only)
+            custom_patterns: Optional custom file patterns {"manifests": [...], "locks": [...]}
+        """
         self.analysis_level = analysis_level
+        self._custom_patterns = custom_patterns or {}
         self._file_detector = FileDetector()
 
     def detect_files(self, path: Path) -> List[Path]:
@@ -159,16 +173,30 @@ class GradleAnalyzer(BaseAnalyzer):
     @property
     def manifest_patterns(self) -> List[str]:
         """Return glob patterns for manifest files."""
-        return ["build.gradle", "build.gradle.kts"]
+        default_patterns = ["build.gradle", "build.gradle.kts"]
+        custom = self._custom_patterns.get("manifests", [])
+        return default_patterns + custom
 
     @property
     def lock_patterns(self) -> List[str]:
         """Return glob patterns for lock files."""
-        return []
+        default_patterns: List[str] = []
+        custom = self._custom_patterns.get("locks", [])
+        return default_patterns + custom
 
-    def __init__(self, analysis_level: int = 1) -> None:
-        """Initialize Gradle analyzer."""
+    def __init__(
+        self,
+        analysis_level: int = 1,
+        custom_patterns: Optional[Dict[str, List[str]]] = None,
+    ) -> None:
+        """Initialize Gradle analyzer.
+
+        Args:
+            analysis_level: Analysis depth (1=manifest only)
+            custom_patterns: Optional custom file patterns {"manifests": [...], "locks": [...]}
+        """
         self.analysis_level = analysis_level
+        self._custom_patterns = custom_patterns or {}
         self._file_detector = FileDetector()
 
     def detect_files(self, path: Path) -> List[Path]:
