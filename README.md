@@ -43,17 +43,24 @@ Every day, new vulnerabilities are discovered in popular packages. **CVE Sentine
 ## Quick Start
 
 ```bash
-# Install CVE Sentinel
 pip install cve-sentinel
+```
 
-# Scan your project
-cve-sentinel scan
+### Option 1: Auto-scan with Claude Code (Recommended)
 
-# Or initialize for automatic scanning with Claude Code
+```bash
 cve-sentinel init
 ```
 
-That's it! CVE Sentinel will now protect your projects automatically.
+This sets up a **SessionStart Hook** - CVE Sentinel will automatically scan your project every time you launch Claude Code. No manual intervention needed!
+
+### Option 2: Manual Scan
+
+```bash
+cve-sentinel scan
+```
+
+Run anytime from your terminal to check for vulnerabilities on demand.
 
 ---
 
