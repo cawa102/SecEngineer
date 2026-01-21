@@ -26,6 +26,12 @@
 
 ---
 
+## Demo
+
+https://github.com/cawa102/cveSentinel/raw/main/assets/cveSentinel.mp4
+
+---
+
 ## Why CVE Sentinel?
 
 Every day, new vulnerabilities are discovered in popular packages. **CVE Sentinel** integrates seamlessly with Claude Code to automatically scan your project dependencies and alert you to security risks - before you ship vulnerable code.
