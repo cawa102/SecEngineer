@@ -53,6 +53,10 @@
 
 ## Demo
 
+<p align="center">
+  <img src="assets/cveSentinel.gif" alt="CVE Sentinel Demo" width="800">
+</p>
+
 https://github.com/user-attachments/assets/25634a88-8ed0-4da4-9b11-4e924ad87adf
 
 ---
