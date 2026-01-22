@@ -63,14 +63,27 @@ https://github.com/user-attachments/assets/25634a88-8ed0-4da4-9b11-4e924ad87adf
 
 ## Why CVE Sentinel?
 
-Every day, new vulnerabilities are discovered in popular packages. **CVE Sentinel** scan your project dependencies and alert you to security risks - before you ship vulnerable code. It also integrates seamlessly with Claude Code to automatically
+### Built for the AI Coding Era
+
+Traditional vulnerability scanners run periodically in CI/CD pipelines — but AI-driven development moves faster. When you're building with Claude Code, new dependencies get added in real-time. **CVE Sentinel** provides always-on protection that activates the moment you start coding, catching vulnerabilities before they ever reach your repository.
+
+### Superior Coverage with Multi-Source Intelligence
+
+Most scanners rely on a single vulnerability database. CVE Sentinel combines **NVD (National Vulnerability Database)** and **Google OSV (Open Source Vulnerabilities)** to deliver broader coverage:
+
+| Source | Strength |
+|--------|----------|
+| **NVD** | Industry standard, detailed CVSS scores, comprehensive CVE data |
+| **Google OSV** | Faster updates, ecosystem-specific advisories (npm, PyPI, Go, etc.) |
+
+By querying both sources, CVE Sentinel catches vulnerabilities that single-source tools miss.
 
 ### Key Features
 
-- **Automatic Scanning** - Runs silently in the background when you start Claude Code
-- **Multi-Source Intelligence** - Combines data from NVD and Google OSV for comprehensive coverage
-- **7+ Languages Supported** - JavaScript, Python, Go, Java, Ruby, Rust, PHP and more
-- **Smart Analysis** - Three levels from quick manifest scans to deep source code analysis
+- **Always-On Detection** - Automatically scans when you start Claude Code sessions
+- **Multi-Source Intelligence** - NVD + Google OSV for maximum coverage
+- **7+ Languages** - JavaScript, Python, Go, Java, Ruby, Rust, PHP and more
+- **3 Analysis Levels** - From quick manifest scans to deep source code analysis
 - **Actionable Fixes** - Get specific upgrade commands, not just vulnerability reports
 
 ---
