@@ -27,7 +27,7 @@ jobs:
 
       - name: Verify version in pyproject.toml
         run: |
-          PYPROJECT_VERSION=$(grep -oP 'version = "\K[^"]+' pyproject.toml)
+          PYPROJECT_VERSION=$(grep -m1 '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           TAG_VERSION=${{ steps.get_version.outputs.version }}
           if [[ "$PYPROJECT_VERSION" != "$TAG_VERSION" ]]; then
             echo "Version mismatch: pyproject.toml=$PYPROJECT_VERSION, tag=$TAG_VERSION"
