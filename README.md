@@ -310,8 +310,6 @@ This script:
 
 If you prefer manual configuration or already have `cve-sentinel` installed via pip:
 
-```
-
 #### Step 1: Create the hook script
 
 Create `~/.claude/hooks/cve-sentinel-scan.sh`:
