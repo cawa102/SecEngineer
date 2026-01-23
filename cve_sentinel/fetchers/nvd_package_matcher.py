@@ -19,15 +19,17 @@ logger = logging.getLogger(__name__)
 
 class ConfidenceLevel(Enum):
     """Confidence level for CVE-package match."""
-    HIGH = "high"        # CPE matches + ecosystem indicator
-    MEDIUM = "medium"    # CPE matches package name, no ecosystem indicator
-    LOW = "low"          # Keyword match only, needs manual review
+
+    HIGH = "high"  # CPE matches + ecosystem indicator
+    MEDIUM = "medium"  # CPE matches package name, no ecosystem indicator
+    LOW = "low"  # Keyword match only, needs manual review
     EXCLUDED = "excluded"  # Clear mismatch (hardware, different product)
 
 
 @dataclass
 class CVEMatchResult:
     """Result of CVE-package matching."""
+
     cve_id: str
     confidence: ConfidenceLevel
     matched_cpes: List[str] = field(default_factory=list)
@@ -48,36 +50,87 @@ ECOSYSTEM_TARGET_SW: Dict[str, Set[str]] = {
 
 # Keywords that indicate a hardware/non-software CVE
 HARDWARE_INDICATORS = {
-    "firmware", "chip", "chipset", "wireless", "bluetooth", "wifi",
-    "hardware", "device", "driver", "kernel", "iot", "embedded",
-    "router", "switch", "controller", "printer", "scanner",
-    "semiconductor", "microcontroller", "soc", "fpga", "asic",
-    "broadcom", "qualcomm", "intel", "amd", "arm", "mips",
+    "firmware",
+    "chip",
+    "chipset",
+    "wireless",
+    "bluetooth",
+    "wifi",
+    "hardware",
+    "device",
+    "driver",
+    "kernel",
+    "iot",
+    "embedded",
+    "router",
+    "switch",
+    "controller",
+    "printer",
+    "scanner",
+    "semiconductor",
+    "microcontroller",
+    "soc",
+    "fpga",
+    "asic",
+    "broadcom",
+    "qualcomm",
+    "intel",
+    "amd",
+    "arm",
+    "mips",
 }
 
 # Known hardware vendors that should be excluded
 HARDWARE_VENDORS = {
-    "cypress_semiconductor", "cypress", "broadcom", "qualcomm",
-    "intel", "amd", "nvidia", "texas_instruments", "microchip",
-    "infineon", "nxp", "stmicroelectronics", "analog_devices",
-    "maxim_integrated", "silicon_labs", "renesas", "mediatek",
-    "realtek", "marvell", "xilinx", "lattice_semiconductor",
+    "cypress_semiconductor",
+    "cypress",
+    "broadcom",
+    "qualcomm",
+    "intel",
+    "amd",
+    "nvidia",
+    "texas_instruments",
+    "microchip",
+    "infineon",
+    "nxp",
+    "stmicroelectronics",
+    "analog_devices",
+    "maxim_integrated",
+    "silicon_labs",
+    "renesas",
+    "mediatek",
+    "realtek",
+    "marvell",
+    "xilinx",
+    "lattice_semiconductor",
 }
 
 # Known false positive patterns: package_name -> set of vendor/product patterns to exclude
 FALSE_POSITIVE_PATTERNS: Dict[str, Set[str]] = {
     "cypress": {
-        "cypress_semiconductor", "broadcom", "google:android",
-        "cypress_wireless", "cypress_bluetooth", "cyw",
+        "cypress_semiconductor",
+        "broadcom",
+        "google:android",
+        "cypress_wireless",
+        "cypress_bluetooth",
+        "cyw",
     },
     "vite": {
-        "vitec", "vitess", "vitemoneycoin", "vita", "vitero",
+        "vitec",
+        "vitess",
+        "vitemoneycoin",
+        "vita",
+        "vitero",
     },
     "passport": {
-        "passport220", "dedos-web", "gamerpolls",
+        "passport220",
+        "dedos-web",
+        "gamerpolls",
     },
     "express": {
-        "expressvpn", "express_gateway", "american_express",
+        "expressvpn",
+        "express_gateway",
+        "american_express",
     },
 }
 
@@ -305,7 +358,11 @@ def check_version_in_range(
 
     # If no constraints, check exact version match
     cpe_version = cpe_match.get("version", "*")
-    if cpe_version and cpe_version != "*" and not any([version_start, version_start_excl, version_end, version_end_excl]):
+    if (
+        cpe_version
+        and cpe_version != "*"
+        and not any([version_start, version_start_excl, version_end, version_end_excl])
+    ):
         try:
             cpe_ver = Version(cpe_version.replace("*", "0"))
             if pkg_ver != cpe_ver:
@@ -510,7 +567,7 @@ class NVDPackageMatcher:
             )
 
             # Filter by confidence
-            if match_result.confidence in confidence_order[:min_index + 1]:
+            if match_result.confidence in confidence_order[: min_index + 1]:
                 results.append(match_result)
 
         return results

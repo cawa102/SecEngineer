@@ -214,10 +214,12 @@ class CombinedVulnerabilityMatcher:
         # Build affected files info
         affected_files = []
         if package.source_file:
-            affected_files.append({
-                "file": str(package.source_file),
-                "line": package.source_line,
-            })
+            affected_files.append(
+                {
+                    "file": str(package.source_file),
+                    "line": package.source_line,
+                }
+            )
 
         return CombinedVulnerabilityMatch(
             cve_id=primary_id,
@@ -302,10 +304,12 @@ class CombinedVulnerabilityMatcher:
         # Build affected files info
         affected_files = []
         if package.source_file:
-            affected_files.append({
-                "file": str(package.source_file),
-                "line": package.source_line,
-            })
+            affected_files.append(
+                {
+                    "file": str(package.source_file),
+                    "line": package.source_line,
+                }
+            )
 
         return CombinedVulnerabilityMatch(
             cve_id=cve.cve_id,

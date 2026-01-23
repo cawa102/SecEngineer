@@ -438,7 +438,9 @@ class Reporter:
             source_display = {"osv": "OSV", "nvd": "NVD", "both": "OSV+NVD"}.get(source, source)
             source_text = f" [{source_display}, {confidence}]"
 
-        output.write(f"  Severity: {self._colorize(severity_text, severity_color)} ({cvss_text}){source_text}\n")
+        output.write(
+            f"  Severity: {self._colorize(severity_text, severity_color)} ({cvss_text}){source_text}\n"
+        )
 
         # Description (truncated)
         if vuln.description:

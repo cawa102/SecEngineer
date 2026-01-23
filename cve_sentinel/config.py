@@ -44,8 +44,7 @@ class DatasourcesConfig:
         valid_levels = {"high", "medium", "low"}
         if self.nvd_min_confidence.lower() not in valid_levels:
             raise ConfigValidationError(
-                f"nvd_min_confidence must be one of {valid_levels}, "
-                f"got '{self.nvd_min_confidence}'"
+                f"nvd_min_confidence must be one of {valid_levels}, got '{self.nvd_min_confidence}'"
             )
         self.nvd_min_confidence = self.nvd_min_confidence.lower()
 
