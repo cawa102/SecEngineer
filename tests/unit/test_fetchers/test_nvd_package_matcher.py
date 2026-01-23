@@ -5,8 +5,6 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
-import pytest
-
 from cve_sentinel.fetchers.nvd import CVEData
 from cve_sentinel.fetchers.nvd_package_matcher import (
     ConfidenceLevel,

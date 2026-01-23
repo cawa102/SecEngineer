@@ -6,11 +6,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
-
 from cve_sentinel.analyzers.base import Package
 from cve_sentinel.fetchers.nvd import CVEData
-from cve_sentinel.fetchers.nvd_package_matcher import ConfidenceLevel, CVEMatchResult
+from cve_sentinel.fetchers.nvd_package_matcher import ConfidenceLevel
 from cve_sentinel.fetchers.osv import OSVVulnerability
 from cve_sentinel.matcher_combined import (
     CombinedVulnerabilityMatch,
