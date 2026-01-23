@@ -8,7 +8,7 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from cve_sentinel.analyzers.base import AnalysisResult, AnalyzerRegistry, Package
 from cve_sentinel.config import Config, ConfigError, load_config
@@ -18,6 +18,9 @@ from cve_sentinel.fetchers.osv import OSVClient
 from cve_sentinel.matcher import VulnerabilityMatch, VulnerabilityMatcher
 from cve_sentinel.matcher_combined import CombinedVulnerabilityMatcher
 from cve_sentinel.reporter import Reporter, create_reporter
+
+# Type alias for matcher (either VulnerabilityMatcher or CombinedVulnerabilityMatcher)
+MatcherType = Union[VulnerabilityMatcher, CombinedVulnerabilityMatcher]
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +85,7 @@ class CVESentinelScanner:
         self._nvd_client = nvd_client
         self._osv_client = osv_client
         self._reporter: Optional[Reporter] = None
-        self._matcher: Optional[VulnerabilityMatcher] = None
+        self._matcher: Optional[MatcherType] = None
         self._initialized = False
 
     def _initialize_components(self, target_path: Path) -> None:
@@ -319,7 +322,7 @@ class CVESentinelScanner:
             if packages and self._matcher:
                 logger.info("Matching packages against vulnerability databases...")
                 try:
-                    vulnerabilities = self._matcher.match(packages)
+                    vulnerabilities = self._matcher.match(packages)  # type: ignore[assignment]
                     logger.info(f"Found {len(vulnerabilities)} vulnerabilities")
                 except Exception as e:
                     error_msg = f"Error during vulnerability matching: {e}"

@@ -404,7 +404,6 @@ class NVDPackageMatcher:
         has_ecosystem_match = False
         has_name_match = False
         has_exact_match = False
-        has_version_match = False
         is_hardware = False
         is_false_pos = False
 
@@ -447,12 +446,9 @@ class NVDPackageMatcher:
                         },
                     )
                     if version_in_range:
-                        has_version_match = True
                         result.reasons.append(version_reason)
                     else:
                         result.reasons.append(f"Version not affected: {version_reason}")
-                else:
-                    has_version_match = True  # No version to check
 
         # Determine confidence level
         if is_false_pos and not has_exact_match:
@@ -461,8 +457,6 @@ class NVDPackageMatcher:
         elif is_hardware and not has_exact_match:
             result.confidence = ConfidenceLevel.EXCLUDED
             result.reasons.append("Hardware-related CVE, not applicable to software package")
-        elif has_exact_match and has_ecosystem_match and has_version_match:
-            result.confidence = ConfidenceLevel.HIGH
         elif has_exact_match and has_ecosystem_match:
             result.confidence = ConfidenceLevel.HIGH
         elif has_exact_match:

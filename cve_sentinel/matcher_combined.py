@@ -9,11 +9,11 @@ This module provides a matcher that:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Dict, List, Optional, Set
 
 from cve_sentinel.analyzers.base import Package
-from cve_sentinel.fetchers.nvd import CVEData, NVDClient
+from cve_sentinel.fetchers.nvd import NVDClient
 from cve_sentinel.fetchers.nvd_package_matcher import (
     ConfidenceLevel,
     CVEMatchResult,
@@ -104,7 +104,7 @@ class CombinedVulnerabilityMatcher:
                 packages_by_ecosystem[pkg.ecosystem] = []
             packages_by_ecosystem[pkg.ecosystem].append(pkg)
 
-        for ecosystem, eco_packages in packages_by_ecosystem.items():
+        for _ecosystem, eco_packages in packages_by_ecosystem.items():
             for pkg in eco_packages:
                 # Step 1: Query OSV (primary source)
                 osv_matches = self._match_osv(pkg)
