@@ -65,6 +65,17 @@ cache_ttl_hours: 24
 #   javascript:
 #     manifests:
 #       - "dependencies.json"
+
+# Data sources configuration
+# OSV: High precision, package-aware queries
+# NVD: Broader coverage with CPE-based filtering
+datasources:
+  osv_enabled: true
+  nvd_enabled: true
+  # Minimum confidence for NVD-only results: high, medium, low
+  nvd_min_confidence: medium
+  # Prefer OSV data when same CVE found in both sources
+  prefer_osv: true
 """
 
 # CLAUDE.md addition template

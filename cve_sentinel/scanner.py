@@ -13,8 +13,10 @@ from typing import List, Optional
 from cve_sentinel.analyzers.base import AnalysisResult, AnalyzerRegistry, Package
 from cve_sentinel.config import Config, ConfigError, load_config
 from cve_sentinel.fetchers.nvd import NVDClient
+from cve_sentinel.fetchers.nvd_package_matcher import ConfidenceLevel
 from cve_sentinel.fetchers.osv import OSVClient
 from cve_sentinel.matcher import VulnerabilityMatch, VulnerabilityMatcher
+from cve_sentinel.matcher_combined import CombinedVulnerabilityMatcher
 from cve_sentinel.reporter import Reporter, create_reporter
 
 logger = logging.getLogger(__name__)
@@ -96,27 +98,55 @@ class CVESentinelScanner:
         cache_dir = target_path / ".cve-sentinel" / "cache"
         cache_dir.mkdir(parents=True, exist_ok=True)
 
-        # Initialize NVD client if not provided
-        if self._nvd_client is None and self.config.nvd_api_key:
+        # Get datasources config
+        ds_config = self.config.datasources
+
+        # Initialize NVD client if enabled and not provided
+        if self._nvd_client is None and ds_config.nvd_enabled and self.config.nvd_api_key:
             self._nvd_client = NVDClient(
                 api_key=self.config.nvd_api_key,
                 cache_dir=cache_dir,
                 cache_ttl_hours=self.config.cache_ttl_hours,
             )
 
-        # Initialize OSV client if not provided
-        if self._osv_client is None:
+        # Initialize OSV client if enabled and not provided
+        if self._osv_client is None and ds_config.osv_enabled:
             self._osv_client = OSVClient(
                 cache_dir=cache_dir,
                 cache_ttl_hours=self.config.cache_ttl_hours,
             )
 
-        # Initialize matcher
-        self._matcher = VulnerabilityMatcher(
-            nvd_client=self._nvd_client,
-            osv_client=self._osv_client,
-            fetch_nvd_details=self._nvd_client is not None,
+        # Map confidence level string to enum
+        confidence_map = {
+            "high": ConfidenceLevel.HIGH,
+            "medium": ConfidenceLevel.MEDIUM,
+            "low": ConfidenceLevel.LOW,
+        }
+        nvd_min_confidence = confidence_map.get(
+            ds_config.nvd_min_confidence.lower(),
+            ConfidenceLevel.MEDIUM,
         )
+
+        # Initialize matcher based on datasources configuration
+        if ds_config.nvd_enabled and self._nvd_client:
+            # Use combined matcher for broader coverage
+            self._matcher = CombinedVulnerabilityMatcher(
+                nvd_client=self._nvd_client,
+                osv_client=self._osv_client if ds_config.osv_enabled else None,
+                nvd_min_confidence=nvd_min_confidence,
+            )
+            logger.info(
+                f"Using combined matcher (OSV: {ds_config.osv_enabled}, "
+                f"NVD: {ds_config.nvd_enabled}, min_confidence: {ds_config.nvd_min_confidence})"
+            )
+        else:
+            # Use original matcher (OSV only or with NVD details)
+            self._matcher = VulnerabilityMatcher(
+                nvd_client=self._nvd_client,
+                osv_client=self._osv_client,
+                fetch_nvd_details=self._nvd_client is not None,
+            )
+            logger.info(f"Using OSV matcher (NVD details: {self._nvd_client is not None})")
 
         # Initialize reporter
         self._reporter = create_reporter(target_path)

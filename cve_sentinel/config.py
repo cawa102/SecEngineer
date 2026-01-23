@@ -23,6 +23,34 @@ class ConfigValidationError(ConfigError):
 
 
 @dataclass
+class DatasourcesConfig:
+    """Configuration for vulnerability data sources.
+
+    Attributes:
+        osv_enabled: Whether to use OSV as a data source.
+        nvd_enabled: Whether to use NVD as a data source.
+        nvd_min_confidence: Minimum confidence level for NVD-only results.
+            Options: "high", "medium", "low"
+        prefer_osv: Whether to prefer OSV data when available from both sources.
+    """
+
+    osv_enabled: bool = True
+    nvd_enabled: bool = True
+    nvd_min_confidence: str = "medium"
+    prefer_osv: bool = True
+
+    def __post_init__(self) -> None:
+        """Validate confidence level."""
+        valid_levels = {"high", "medium", "low"}
+        if self.nvd_min_confidence.lower() not in valid_levels:
+            raise ConfigValidationError(
+                f"nvd_min_confidence must be one of {valid_levels}, "
+                f"got '{self.nvd_min_confidence}'"
+            )
+        self.nvd_min_confidence = self.nvd_min_confidence.lower()
+
+
+@dataclass
 class Config:
     """CVE Sentinel configuration.
 
@@ -36,6 +64,7 @@ class Config:
         auto_scan_on_startup: Whether to automatically scan on startup.
         cache_ttl_hours: Cache time-to-live in hours.
         nvd_api_key: NVD API key for vulnerability data.
+        datasources: Configuration for vulnerability data sources.
     """
 
     target_path: Path = field(default_factory=lambda: Path("."))
@@ -47,11 +76,16 @@ class Config:
     cache_ttl_hours: int = 24
     nvd_api_key: Optional[str] = None
     custom_patterns: Optional[dict[str, dict[str, list[str]]]] = None
+    datasources: DatasourcesConfig = field(default_factory=DatasourcesConfig)
 
     def __post_init__(self) -> None:
-        """Convert target_path to Path if string."""
+        """Convert target_path to Path if string and datasources to DatasourcesConfig."""
         if isinstance(self.target_path, str):
             self.target_path = Path(self.target_path)
+
+        # Convert datasources dict to DatasourcesConfig if needed
+        if isinstance(self.datasources, dict):
+            self.datasources = DatasourcesConfig(**self.datasources)
 
 
 def _find_config_file(base_path: Path) -> Optional[Path]:

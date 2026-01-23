@@ -281,7 +281,7 @@ class Reporter:
         Returns:
             Dictionary representation.
         """
-        return {
+        result = {
             "cve_id": vuln.cve_id,
             "osv_id": vuln.osv_id,
             "package_name": vuln.package.name,
@@ -295,6 +295,16 @@ class Reporter:
             "fix_command": vuln.fix_command,
             "references": vuln.references[:5] if vuln.references else [],
         }
+
+        # Add combined matcher fields if available
+        if hasattr(vuln, "source"):
+            result["source"] = vuln.source
+        if hasattr(vuln, "confidence"):
+            result["confidence"] = vuln.confidence
+        if hasattr(vuln, "nvd_verified"):
+            result["nvd_verified"] = vuln.nvd_verified
+
+        return result
 
     def print_summary(
         self,
@@ -419,7 +429,16 @@ class Reporter:
         # Severity and CVSS score
         severity_text = vuln.severity or "UNKNOWN"
         cvss_text = f"CVSS {vuln.cvss_score}" if vuln.cvss_score else "CVSS N/A"
-        output.write(f"  Severity: {self._colorize(severity_text, severity_color)} ({cvss_text})\n")
+
+        # Add source and confidence if available (from CombinedVulnerabilityMatch)
+        source_text = ""
+        if hasattr(vuln, "source") and hasattr(vuln, "confidence"):
+            source = getattr(vuln, "source", "unknown")
+            confidence = getattr(vuln, "confidence", "unknown")
+            source_display = {"osv": "OSV", "nvd": "NVD", "both": "OSV+NVD"}.get(source, source)
+            source_text = f" [{source_display}, {confidence}]"
+
+        output.write(f"  Severity: {self._colorize(severity_text, severity_color)} ({cvss_text}){source_text}\n")
 
         # Description (truncated)
         if vuln.description:

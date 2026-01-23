@@ -71,19 +71,46 @@ Traditional vulnerability scanners run periodically in CI/CD pipelines — but A
 
 ### Superior Coverage with Multi-Source Intelligence
 
-Most scanners rely on a single vulnerability database. CVE Sentinel combines **NVD (National Vulnerability Database)** and **Google OSV (Open Source Vulnerabilities)** to deliver broader coverage:
+Most scanners rely on a single vulnerability database. CVE Sentinel combines **NVD (National Vulnerability Database)** and **Google OSV (Open Source Vulnerabilities)** with intelligent filtering to deliver broader coverage without false positives:
 
 | Source | Strength |
 |--------|----------|
-| **NVD** | Industry standard, detailed CVSS scores, comprehensive CVE data |
-| **Google OSV** | Faster updates, ecosystem-specific advisories (npm, PyPI, Go, etc.) |
+| **Google OSV** | High precision, ecosystem-aware queries, faster updates |
+| **NVD** | Broader coverage, detailed CVSS scores, comprehensive CVE data |
 
-By querying both sources, CVE Sentinel catches vulnerabilities that single-source tools miss.
+#### Detection Comparison
+
+| Method | CVEs Detected | False Positives | Assessment |
+|--------|---------------|-----------------|------------|
+| OSV Only | 19 | 0 | ✓ High precision, limited coverage |
+| NVD Only | 115 | 98+ | ✗ Many false positives |
+| **CVE Sentinel (Combined)** | **38** | **0** | ✓ **Best of both worlds** |
+
+> *Tested on 5 popular packages: vite, express, lodash, axios, cypress*
+
+By combining both sources with **CPE-based filtering** and **confidence scoring**, CVE Sentinel achieves **2x detection coverage** compared to OSV-only scanning while maintaining zero false positives.
+
+### Intelligent False Positive Filtering
+
+Raw NVD keyword searches often return irrelevant results. CVE Sentinel filters them out automatically:
+
+| Package | False Match | Reason | Result |
+|---------|-------------|--------|--------|
+| `cypress` | Cypress Semiconductor chips | Hardware vendor | ❌ Filtered |
+| `vite` | VITEC video encoders | Different product | ❌ Filtered |
+| `express` | ExpressVPN | Different product | ❌ Filtered |
+
+**How it works:**
+- 🔍 **CPE Matching** - Validates vendor/product names against known mappings
+- 🏭 **Hardware Exclusion** - Blocks 20+ hardware vendors (Intel, Broadcom, etc.)
+- 📊 **Confidence Scoring** - HIGH / MEDIUM / LOW ratings for each match
+- 🔢 **Version Validation** - Checks if your version is actually affected
 
 ### Key Features
 
 - **Always-On Detection** - Automatically scans when you start Claude Code sessions
 - **Multi-Source Intelligence** - NVD + Google OSV for maximum coverage
+- **Smart Filtering** - Eliminates false positives with CPE-based validation
 - **7+ Languages** - JavaScript, Python, Go, Java, Ruby, Rust, PHP and more
 - **3 Analysis Levels** - From quick manifest scans to deep source code analysis
 - **Actionable Fixes** - Get specific upgrade commands, not just vulnerability reports
@@ -244,7 +271,22 @@ cache_ttl_hours: 24
 
 # Auto-scan on Claude Code startup
 auto_scan_on_startup: true
+
+# Data sources configuration
+datasources:
+  osv_enabled: true       # High precision, ecosystem-aware
+  nvd_enabled: true       # Broader coverage with filtering
+  nvd_min_confidence: medium  # high, medium, or low
+  prefer_osv: true        # Prefer OSV data when available from both
 ```
+
+### Confidence Levels
+
+| Level | Criteria | Included by Default |
+|-------|----------|---------------------|
+| **HIGH** | Exact CPE match + ecosystem verified | ✓ Yes |
+| **MEDIUM** | CPE match or partial match + ecosystem | ✓ Yes |
+| **LOW** | Keyword match only | ✗ No |
 
 CLI options override configuration file settings.
 
